@@ -1,0 +1,58 @@
+<?php
+
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ManageController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\VoteSubmissionController;
+use Illuminate\Support\Facades\Route;
+
+// ── Auth ──────────────────────────────────────────────────
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
+
+// ── Dashboard ─────────────────────────────────────────────
+Route::get('/', fn () => redirect()->route('dashboard'));
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+
+// ── Vote Submissions ──────────────────────────────────────
+Route::get('/submit', [VoteSubmissionController::class, 'create'])->name('votes.create')->middleware('auth');
+Route::post('/submit', [VoteSubmissionController::class, 'store'])->name('votes.store')->middleware('auth');
+Route::get('/submission/{submission}', [VoteSubmissionController::class, 'show'])->name('votes.show')->middleware('auth');
+Route::post('/submission/{submission}/verify', [VoteSubmissionController::class, 'verify'])
+    ->middleware(['auth', 'admin'])
+    ->name('votes.verify');
+Route::post('/bulk-submit', [VoteSubmissionController::class, 'bulkStore'])->name('votes.bulk')->middleware('auth');
+
+// ── Reports ───────────────────────────────────────────────
+Route::get('/reports', [ReportController::class, 'index'])->name('reports.index')->middleware('auth');
+Route::post('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate')->middleware('auth');
+Route::get('/reports/export-csv', [ReportController::class, 'exportCsv'])
+    ->middleware(['auth', 'admin'])
+    ->name('reports.export');
+
+// ── Admin: Manage ─────────────────────────────────────────
+Route::prefix('manage')->name('manage.')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/', [ManageController::class, 'index'])->name('index');
+
+    Route::post('/counties', [ManageController::class, 'storeCounty'])->name('counties.store');
+    Route::delete('/counties/{county}', [ManageController::class, 'destroyCounty'])->name('counties.destroy');
+
+    Route::post('/constituencies', [ManageController::class, 'storeConstituency'])->name('constituencies.store');
+    Route::delete('/constituencies/{constituency}', [ManageController::class, 'destroyConstituency'])->name('constituencies.destroy');
+
+    Route::post('/wards', [ManageController::class, 'storeWard'])->name('wards.store');
+    Route::delete('/wards/{ward}', [ManageController::class, 'destroyWard'])->name('wards.destroy');
+
+    Route::post('/stations', [ManageController::class, 'storeStation'])->name('stations.store');
+    Route::delete('/stations/{station}', [ManageController::class, 'destroyStation'])->name('stations.destroy');
+
+    Route::post('/candidates', [ManageController::class, 'storeCandidate'])->name('candidates.store');
+    Route::delete('/candidates/{candidate}', [ManageController::class, 'destroyCandidate'])->name('candidates.destroy');
+
+    Route::post('/election-types', [ManageController::class, 'storeElectionType'])->name('electionTypes.store');
+    Route::delete('/election-types/{electionType}', [ManageController::class, 'destroyElectionType'])->name('electionTypes.destroy');
+});
