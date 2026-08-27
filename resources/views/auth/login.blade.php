@@ -39,14 +39,14 @@
                 @csrf
                 <div class="space-y-5">
                     <div>
-                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
-                        <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
+                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-1.5">Email or Username (e.g. admin1)</label>
+                        <input type="text" id="email" name="email" value="{{ old('email') }}" required autofocus placeholder="admin1, admin2, or admin1@polling.go.ke"
                                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all bg-gray-50 focus:bg-white">
                     </div>
 
                     <div>
                         <label for="password" class="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
-                        <input type="password" id="password" name="password" required
+                        <input type="password" id="password" name="password" required placeholder="admin123 or password"
                                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all bg-gray-50 focus:bg-white">
                     </div>
 
@@ -68,10 +68,41 @@
                     </button>
                 </div>
             </form>
+
+            {{-- Quick Role Access Selector --}}
+            <div class="mt-8 pt-6 border-t border-gray-100">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider text-center mb-3">Quick Role Demo Credentials</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" @click="document.getElementById('email').value='admin1@polling.go.ke'; document.getElementById('password').value='admin123';" class="p-2 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-green-50 hover:text-green-700 rounded-lg border border-gray-200 transition-colors text-left flex items-center justify-between">
+                        <span>Admin 1</span>
+                        <span class="text-[10px] text-gray-400 font-mono">admin123</span>
+                    </button>
+                    <button type="button" @click="document.getElementById('email').value='admin2@polling.go.ke'; document.getElementById('password').value='admin123';" class="p-2 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-green-50 hover:text-green-700 rounded-lg border border-gray-200 transition-colors text-left flex items-center justify-between">
+                        <span>Admin 2</span>
+                        <span class="text-[10px] text-gray-400 font-mono">admin123</span>
+                    </button>
+                    <button type="button" @click="document.getElementById('email').value='admin3@polling.go.ke'; document.getElementById('password').value='admin123';" class="p-2 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-green-50 hover:text-green-700 rounded-lg border border-gray-200 transition-colors text-left flex items-center justify-between">
+                        <span>Admin 3</span>
+                        <span class="text-[10px] text-gray-400 font-mono">admin123</span>
+                    </button>
+                    <button type="button" @click="document.getElementById('email').value='admin4@polling.go.ke'; document.getElementById('password').value='admin123';" class="p-2 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-green-50 hover:text-green-700 rounded-lg border border-gray-200 transition-colors text-left flex items-center justify-between">
+                        <span>Admin 4</span>
+                        <span class="text-[10px] text-gray-400 font-mono">admin123</span>
+                    </button>
+                    <button type="button" @click="document.getElementById('email').value='county@polling.go.ke'; document.getElementById('password').value='password';" class="p-2 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-green-50 hover:text-green-700 rounded-lg border border-gray-200 transition-colors text-left flex items-center justify-between">
+                        <span>County Admin</span>
+                        <span class="text-[10px] text-gray-400 font-mono">password</span>
+                    </button>
+                    <button type="button" @click="document.getElementById('email').value='alice@agent.go.ke'; document.getElementById('password').value='password';" class="p-2 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-green-50 hover:text-green-700 rounded-lg border border-gray-200 transition-colors text-left flex items-center justify-between">
+                        <span>Field Agent</span>
+                        <span class="text-[10px] text-gray-400 font-mono">password</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <p class="text-center text-xs text-gray-400 mt-6">
-            Secure system — All activity is logged and monitored.
+            Kakamega County Election Tallying System — Form 34A & 34B Management
         </p>
     </div>
 

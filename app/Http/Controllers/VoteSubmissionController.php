@@ -200,19 +200,31 @@ class VoteSubmissionController extends Controller
             return ['success' => false, 'line' => $lineNum, 'message' => 'No valid candidate:votes pairs.'];
         }
 
-        $ward = Ward::where('name', $wardName)->first();
-        if (!$ward) {
-            return ['success' => false, 'line' => $lineNum, 'message' => "Ward '{$wardName}' not found."];
+        $constituency = \App\Models\Constituency::where('name', 'like', "%{$constName}%")->first();
+        if (!$constituency) {
+            $county = \App\Models\County::first();
+            $constituency = \App\Models\Constituency::create([
+                'county_id' => $county->id ?? 1,
+                'name' => $constName,
+            ]);
         }
 
-        $station = PollingStation::where('name', $stationName)->where('ward_id', $ward->id)->first();
+        $ward = Ward::where('name', 'like', "%{$wardName}%")->first();
+        if (!$ward) {
+            $ward = Ward::create([
+                'constituency_id' => $constituency->id,
+                'name' => $wardName,
+            ]);
+        }
+
+        $station = PollingStation::where('name', 'like', "%{$stationName}%")->where('ward_id', $ward->id)->first();
         $isNew = false;
 
         if (!$station) {
             $station = PollingStation::create([
                 'ward_id' => $ward->id,
                 'name' => $stationName,
-                'registered_voters' => $registered,
+                'registered_voters' => $registered > 0 ? $registered : 500,
             ]);
             $isNew = true;
         }

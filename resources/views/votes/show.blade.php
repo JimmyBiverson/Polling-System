@@ -87,25 +87,27 @@
 
     {{-- Admin Verification --}}
     @if(auth()->user()->isAdmin() && $submission->status === 'pending')
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <h3 class="text-lg font-bold text-gray-900 mb-4">Admin Verification</h3>
-        <div class="space-y-3">
-            <textarea name="notes" rows="2" placeholder="Add verification notes (optional)" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500"></textarea>
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6" x-data="{ notesText: '' }">
+        <h3 class="text-lg font-bold text-gray-900 mb-4">Admin Form 34A Verification</h3>
+        <div class="space-y-4">
+            <textarea x-model="notesText" rows="2" placeholder="Add verification audit notes (optional)..." class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500"></textarea>
             <div class="flex gap-3">
                 <form method="POST" action="{{ route('votes.verify', $submission) }}">
                     @csrf
                     <input type="hidden" name="status" value="verified">
-                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-6 rounded-xl transition-all flex items-center gap-2">
+                    <input type="hidden" name="notes" :value="notesText">
+                    <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                        Verify
+                        Approve & Verify Form 34A
                     </button>
                 </form>
                 <form method="POST" action="{{ route('votes.verify', $submission) }}">
                     @csrf
                     <input type="hidden" name="status" value="rejected">
-                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-6 rounded-xl transition-all flex items-center gap-2">
+                    <input type="hidden" name="notes" :value="notesText">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                        Reject
+                        Reject Submission
                     </button>
                 </form>
             </div>

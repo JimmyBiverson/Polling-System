@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // ── Users ──────────────────────────────────────────
+        // ── Admin Accounts (admin1 - admin4 + super_admin + county_admin) ──
         $admin = User::create([
             'name' => 'Super Admin',
             'email' => 'admin@polling.go.ke',
@@ -25,8 +25,40 @@ class DatabaseSeeder extends Seeder
             'phone' => '0700000001',
         ]);
 
+        $admin1 = User::create([
+            'name' => 'Admin 1 (Lead Tallying Officer)',
+            'email' => 'admin1@polling.go.ke',
+            'password' => Hash::make('admin123'),
+            'role' => 'super_admin',
+            'phone' => '0700000011',
+        ]);
+
+        $admin2 = User::create([
+            'name' => 'Admin 2 (Electoral Audit Officer)',
+            'email' => 'admin2@polling.go.ke',
+            'password' => Hash::make('admin123'),
+            'role' => 'super_admin',
+            'phone' => '0700000012',
+        ]);
+
+        $admin3 = User::create([
+            'name' => 'Admin 3 (Verification Officer)',
+            'email' => 'admin3@polling.go.ke',
+            'password' => Hash::make('admin123'),
+            'role' => 'super_admin',
+            'phone' => '0700000013',
+        ]);
+
+        $admin4 = User::create([
+            'name' => 'Admin 4 (Data Manager)',
+            'email' => 'admin4@polling.go.ke',
+            'password' => Hash::make('admin123'),
+            'role' => 'super_admin',
+            'phone' => '0700000014',
+        ]);
+
         $countyAdmin = User::create([
-            'name' => 'County Admin',
+            'name' => 'County Admin (Kakamega)',
             'email' => 'county@polling.go.ke',
             'password' => Hash::make('password'),
             'role' => 'county_admin',
@@ -182,6 +214,43 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        echo "Seeded: 4 users, 1 county, 12 constituencies, " . count($wards) . " wards, {$stationCount} stations, 5 election types, " . Candidate::count() . " candidates\n";
+        // ── Initial Seed Submissions for Governor Election ──
+        $govCandidates = Candidate::where('election_type_id', $electionTypes['Governor']->id)->get();
+        $sampleStations = PollingStation::with('ward.constituency')->take(40)->get();
+
+        foreach ($sampleStations as $idx => $station) {
+            $b1 = rand(150, 420);
+            $b2 = rand(100, 310);
+            $b3 = rand(50, 180);
+            $spoilt = rand(2, 18);
+            $totalCast = $b1 + $b2 + $b3 + $spoilt;
+            $registered = max($station->registered_voters, $totalCast + rand(50, 200));
+
+            $submission = \App\Models\VoteSubmission::create([
+                'polling_station_id' => $station->id,
+                'election_type_id' => $electionTypes['Governor']->id,
+                'user_id' => $admin1->id,
+                'agent_name' => 'Agent ' . ($idx + 1),
+                'agent_code' => 'E0987' . str_pad($idx, 4, '0', STR_PAD_LEFT),
+                'presiding_officer' => 'PO Officer ' . chr(65 + ($idx % 26)),
+                'spoilt_votes' => $spoilt,
+                'total_votes_cast' => $totalCast,
+                'registered_voters' => $registered,
+                'status' => $idx % 5 === 0 ? 'pending' : 'verified',
+                'ip_address' => '127.0.0.1',
+                'submitted_at' => now()->subMinutes(rand(5, 480)),
+            ]);
+
+            if ($govCandidates->count() >= 3) {
+                \App\Models\VoteDetail::create(['vote_submission_id' => $submission->id, 'candidate_id' => $govCandidates[0]->id, 'votes' => $b1]);
+                \App\Models\VoteDetail::create(['vote_submission_id' => $submission->id, 'candidate_id' => $govCandidates[1]->id, 'votes' => $b2]);
+                \App\Models\VoteDetail::create(['vote_submission_id' => $submission->id, 'candidate_id' => $govCandidates[2]->id, 'votes' => $b3]);
+            }
+
+            $submission->submission_hash = $submission->generateHash();
+            $submission->save();
+        }
+
+        echo "Seeded: 8 users, 1 county, 12 constituencies, " . count($wards) . " wards, {$stationCount} stations, 5 election types, " . Candidate::count() . " candidates, and " . \App\Models\VoteSubmission::count() . " vote submissions.\n";
     }
 }

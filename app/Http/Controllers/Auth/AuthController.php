@@ -22,11 +22,27 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|string',
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $input = trim($request->email);
+        $email = $input;
+        if (!str_contains($input, '@')) {
+            if (in_array(strtolower($input), ['admin1', 'admin2', 'admin3', 'admin4'])) {
+                $email = strtolower($input) . '@polling.go.ke';
+            } elseif (strtolower($input) === 'admin') {
+                $email = 'admin@polling.go.ke';
+            } elseif (strtolower($input) === 'county') {
+                $email = 'county@polling.go.ke';
+            } elseif (strtolower($input) === 'agent' || strtolower($input) === 'alice') {
+                $email = 'alice@agent.go.ke';
+            } else {
+                $email = strtolower($input) . '@polling.go.ke';
+            }
+        }
+
+        $user = User::where('email', $email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
