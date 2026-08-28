@@ -7,7 +7,7 @@
     <title>Login — Kenya Election Tally</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center antialiased">
+<body class="bg-[#f4f7f5] min-h-screen flex items-center justify-center antialiased">
 
     <div class="w-full max-w-md px-4" x-data="{ loading: false }">
         {{-- Header --}}
@@ -18,11 +18,11 @@
                 </svg>
             </div>
             <h1 class="text-2xl font-bold text-gray-900">Kenya Election Tally</h1>
-            <p class="text-gray-500 text-sm mt-1">Sign in to access the system</p>
+            <p class="text-gray-700 text-sm mt-1">Secure access to the Kakamega tallying center</p>
         </div>
 
         {{-- Login Card --}}
-        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 sm:p-8">
             @if($errors->any())
             <div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3 mb-6">
                 {{ $errors->first() }}
@@ -39,13 +39,13 @@
                 @csrf
                 <div class="space-y-5">
                     <div>
-                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-1.5">Email or Username (e.g. admin1)</label>
+                        <label for="email" class="block text-sm font-bold text-gray-800 mb-1.5">Email or username</label>
                         <input type="text" id="email" name="email" value="{{ old('email') }}" required autofocus placeholder="admin1, admin2, or admin1@polling.go.ke"
                                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all bg-gray-50 focus:bg-white">
                     </div>
 
                     <div>
-                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
+                        <label for="password" class="block text-sm font-bold text-gray-800 mb-1.5">Password</label>
                         <input type="password" id="password" name="password" required placeholder="admin123 or password"
                                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all bg-gray-50 focus:bg-white">
                     </div>

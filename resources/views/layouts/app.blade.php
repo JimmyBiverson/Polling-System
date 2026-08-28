@@ -11,9 +11,9 @@
     </style>
     @stack('styles')
 </head>
-<body class="bg-gray-50 text-gray-900 antialiased min-h-screen flex flex-col">
+<body class="bg-[#f4f7f5] text-gray-950 antialiased min-h-screen flex flex-col">
 
-<div x-data="{ mobileMenuOpen: false }" class="min-h-screen flex flex-col bg-gray-50">
+<div x-data="{ mobileMenuOpen: false }" @keydown.escape.window="mobileMenuOpen = false" class="min-h-screen flex flex-col bg-[#f4f7f5]">
 
     {{-- Top Bar --}}
     <header class="bg-gradient-to-r from-emerald-950 via-green-900 to-emerald-950 text-white shadow-xl relative overflow-hidden z-30">
@@ -59,7 +59,7 @@
                         </div>
 
                         {{-- Mobile Hamburger Trigger Button --}}
-                        <button @click="mobileMenuOpen = true" type="button" class="md:hidden bg-emerald-800/80 hover:bg-emerald-700 text-white p-2.5 rounded-xl border border-emerald-500/50 shadow-md focus:outline-none flex items-center gap-2">
+                        <button @click="mobileMenuOpen = true" type="button" aria-label="Open navigation menu" :aria-expanded="mobileMenuOpen.toString()" aria-controls="mobile-navigation" class="md:hidden bg-emerald-800/80 hover:bg-emerald-700 text-white p-2.5 rounded-xl border border-emerald-500/50 shadow-md focus:outline-none flex items-center gap-2">
                             <span class="text-xs font-bold text-amber-300">Menu</span>
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
@@ -121,7 +121,7 @@
         <div @click="mobileMenuOpen = false" class="fixed inset-0 bg-gray-950/70 backdrop-blur-sm"></div>
 
         {{-- Off-Canvas Panel --}}
-        <div class="fixed inset-y-0 right-0 w-4/5 max-w-xs bg-gray-900 text-white shadow-2xl p-6 flex flex-col justify-between border-l border-emerald-800/50 z-50 transform transition-transform duration-300">
+        <div id="mobile-navigation" role="dialog" aria-modal="true" aria-label="Main navigation" class="fixed inset-y-0 right-0 w-[min(86vw,22rem)] max-w-xs bg-gray-950 text-white shadow-2xl p-5 sm:p-6 flex flex-col justify-between border-l border-emerald-800/50 z-50 transform transition-transform duration-300">
             <div class="space-y-6">
                 {{-- Drawer Header --}}
                 <div class="flex items-center justify-between border-b border-gray-800 pb-4">
@@ -131,7 +131,7 @@
                         </div>
                         <span class="font-extrabold text-base text-amber-300">Navigation Menu</span>
                     </div>
-                    <button @click="mobileMenuOpen = false" class="text-gray-400 hover:text-white p-1 rounded-lg bg-gray-800">
+                    <button @click="mobileMenuOpen = false" type="button" aria-label="Close navigation menu" class="text-gray-300 hover:text-white p-2 rounded-lg bg-gray-800">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>

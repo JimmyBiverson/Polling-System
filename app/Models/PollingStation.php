@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PollingStation extends Model
 {
@@ -20,6 +21,11 @@ class PollingStation extends Model
     public function submissions(): HasMany
     {
         return $this->hasMany(VoteSubmission::class);
+    }
+
+    public function latestSubmission(): HasOne
+    {
+        return $this->hasOne(VoteSubmission::class)->latestOfMany('submitted_at');
     }
 
     public function getLatestSubmission()

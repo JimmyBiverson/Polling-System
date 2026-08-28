@@ -16,26 +16,26 @@ Route::post('/register', [AuthController::class, 'register']);
 
 // ── Dashboard ─────────────────────────────────────────────
 Route::get('/', fn () => redirect()->route('dashboard'));
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth.agent');
 
 // ── Vote Submissions ──────────────────────────────────────
-Route::get('/submit', [VoteSubmissionController::class, 'create'])->name('votes.create')->middleware('auth');
-Route::post('/submit', [VoteSubmissionController::class, 'store'])->name('votes.store')->middleware('auth');
-Route::get('/submission/{submission}', [VoteSubmissionController::class, 'show'])->name('votes.show')->middleware('auth');
+Route::get('/submit', [VoteSubmissionController::class, 'create'])->name('votes.create')->middleware('auth.agent');
+Route::post('/submit', [VoteSubmissionController::class, 'store'])->name('votes.store')->middleware('auth.agent');
+Route::get('/submission/{submission}', [VoteSubmissionController::class, 'show'])->name('votes.show')->middleware('auth.agent');
 Route::post('/submission/{submission}/verify', [VoteSubmissionController::class, 'verify'])
-    ->middleware(['auth', 'admin'])
+    ->middleware(['auth.agent', 'admin'])
     ->name('votes.verify');
-Route::post('/bulk-submit', [VoteSubmissionController::class, 'bulkStore'])->name('votes.bulk')->middleware('auth');
+Route::post('/bulk-submit', [VoteSubmissionController::class, 'bulkStore'])->name('votes.bulk')->middleware('auth.agent');
 
 // ── Reports ───────────────────────────────────────────────
-Route::get('/reports', [ReportController::class, 'index'])->name('reports.index')->middleware('auth');
-Route::post('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate')->middleware('auth');
+Route::get('/reports', [ReportController::class, 'index'])->name('reports.index')->middleware('auth.agent');
+Route::post('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate')->middleware('auth.agent');
 Route::get('/reports/export-csv', [ReportController::class, 'exportCsv'])
-    ->middleware(['auth', 'admin'])
+    ->middleware(['auth.agent', 'admin'])
     ->name('reports.export');
 
 // ── Admin: Manage ─────────────────────────────────────────
-Route::prefix('manage')->name('manage.')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('manage')->name('manage.')->middleware(['auth.agent', 'admin'])->group(function () {
     Route::get('/', [ManageController::class, 'index'])->name('index');
 
     Route::post('/counties', [ManageController::class, 'storeCounty'])->name('counties.store');
@@ -74,5 +74,5 @@ Route::prefix('manage')->name('manage.')->middleware(['auth', 'admin'])->group(f
 
 // ── Super Admin Submission Overrides ───────────────────────
 Route::post('/submission/{submission}/override', [VoteSubmissionController::class, 'overrideStatus'])
-    ->middleware(['auth', 'admin'])
+    ->middleware(['auth.agent', 'admin'])
     ->name('votes.override');

@@ -12,6 +12,42 @@
     --color-kenya-black: #111111;
 }
 
+@layer base {
+    body {
+        background: #f4f7f5;
+        color: #13201a;
+    }
+
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    :focus-visible {
+        outline: 3px solid #f59e0b;
+        outline-offset: 2px;
+    }
+}
+
+@layer components {
+    .dashboard-shell {
+        color: #17231c;
+    }
+
+    .dashboard-panel,
+    .dashboard-metric {
+        box-shadow: 0 10px 30px -24px rgb(15 23 42 / 0.45);
+    }
+
+    .dashboard-panel h3,
+    .dashboard-metric p {
+        text-wrap: balance;
+    }
+}
+
 /* Custom scrollbar */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

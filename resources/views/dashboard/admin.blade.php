@@ -2,19 +2,19 @@
 @section('title', 'Admin Dashboard — Kakamega Tallying Center')
 
 @section('content')
-<div class="space-y-6" x-data="dashboard()">
+<div class="dashboard-shell space-y-6" x-data="dashboard()">
 
     {{-- Live Tallying Stream Header --}}
-    <div class="bg-gradient-to-r from-gray-950 via-emerald-950 to-gray-950 text-white rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-emerald-600/40 relative overflow-hidden">
+    <div class="dashboard-hero bg-linear-to-r from-gray-950 via-emerald-950 to-gray-950 text-white rounded-3xl p-5 sm:p-7 shadow-2xl border-2 border-emerald-600/40 relative overflow-hidden">
         <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
             <div>
                 <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500 text-gray-950 text-xs font-black shadow-lg shadow-emerald-500/20 mb-3">
                     <span class="w-2.5 h-2.5 rounded-full bg-gray-950 animate-ping"></span>
-                    <span class="uppercase tracking-wide">Live Transmission Stream Active — Kakamega County Tallying Center</span>
+                    <span class="uppercase tracking-wide">Live transmission stream · Kakamega tallying center</span>
                 </div>
                 <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight drop-shadow-sm">Electoral Command & Analytics Center</h1>
-                <p class="text-amber-300 text-sm sm:text-base font-bold mt-1.5">Form 34A & 34B Real-time Results Processing (12 Constituencies, 60 Wards)</p>
+                <p class="text-emerald-100 text-sm sm:text-base font-semibold mt-1.5">Form 34A and 34B results processing · 12 constituencies · 60 wards</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <button @click="showBulkModal = true" class="bg-emerald-400 hover:bg-emerald-300 text-gray-950 font-black text-xs sm:text-sm py-3 px-6 rounded-2xl shadow-xl shadow-emerald-400/20 transition-all flex items-center gap-2 border border-emerald-300">
@@ -30,8 +30,8 @@
     </div>
 
     {{-- Key Electoral Metrics --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="dashboard-metric bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold text-gray-600 uppercase tracking-wider">Total Valid Votes</p>
@@ -47,7 +47,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+        <div class="dashboard-metric bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold text-gray-600 uppercase tracking-wider">Spoilt / Rejected</p>
@@ -63,7 +63,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+        <div class="dashboard-metric bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold text-gray-600 uppercase tracking-wider">Registered Voters</p>
@@ -78,7 +78,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+        <div class="dashboard-metric bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold text-gray-600 uppercase tracking-wider">Voter Turnout Rate</p>
@@ -104,7 +104,7 @@
                     <svg class="w-6 h-6 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                     <span>Electoral Graphical Analytics & Demographics</span>
                 </h2>
-                <p class="text-xs text-gray-600 font-semibold">Side-by-Side Visuals: Bar Graphs on the Left, Pie & Doughnut Charts on the Right</p>
+                <p class="text-xs text-gray-700 font-semibold">Compare the live vote picture and transmission health at a glance</p>
             </div>
             <span class="text-xs font-black bg-emerald-100 text-emerald-900 px-3 py-1 rounded-full border border-emerald-300 shadow-sm hidden sm:inline-block">
                 Live Interactive Visuals
@@ -115,7 +115,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             {{-- Graph on LEFT (2 cols on lg screens) --}}
-            <div class="lg:col-span-2 bg-white rounded-3xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div class="dashboard-panel lg:col-span-2 bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-lg font-black text-gray-950 flex items-center gap-2">
@@ -128,7 +128,7 @@
                         Governor Race
                     </span>
                 </div>
-                <div class="relative h-64 sm:h-72">
+                <div class="relative h-56 sm:h-64">
                     <canvas id="governorRaceChart"></canvas>
                 </div>
                 @if(count($governorCandidatesData) > 0)
@@ -142,7 +142,7 @@
             </div>
 
             {{-- Pie / Doughnut Chart on RIGHT (1 col) --}}
-            <div class="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div class="dashboard-panel bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-3">
                     <div>
                         <h3 class="text-base font-black text-gray-950 flex items-center gap-2">
@@ -155,25 +155,25 @@
                         Demographics
                     </span>
                 </div>
-                <div class="relative h-56 flex items-center justify-center">
+                <div class="relative h-52 flex items-center justify-center">
                     <canvas id="demographicsChart"></canvas>
                 </div>
                 <div class="mt-4 grid grid-cols-2 gap-2 text-xs pt-3 border-t border-gray-100 font-extrabold">
                     <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-100">
                         <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
-                        <span class="text-gray-700">Youth (18–25): <strong class="text-gray-950">28%</strong></span>
+                        <span class="text-gray-800">Youth (18–25): <strong class="text-gray-950">28%</strong></span>
                     </div>
                     <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-100">
                         <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
-                        <span class="text-gray-700">Young (26–35): <strong class="text-gray-950">34%</strong></span>
+                        <span class="text-gray-800">Young (26–35): <strong class="text-gray-950">34%</strong></span>
                     </div>
                     <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-100">
                         <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
-                        <span class="text-gray-700">Middle (36–55): <strong class="text-gray-950">26%</strong></span>
+                        <span class="text-gray-800">Middle (36–55): <strong class="text-gray-950">26%</strong></span>
                     </div>
                     <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-100">
                         <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
-                        <span class="text-gray-700">Seniors (56+): <strong class="text-gray-950">12%</strong></span>
+                        <span class="text-gray-800">Seniors (56+): <strong class="text-gray-950">12%</strong></span>
                     </div>
                 </div>
             </div>
@@ -184,7 +184,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             {{-- Grouped Bar Graph on LEFT (2 cols on lg screens) --}}
-            <div class="lg:col-span-2 bg-white rounded-3xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div class="dashboard-panel lg:col-span-2 bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <h3 class="text-lg font-black text-gray-950 flex items-center gap-2">
@@ -197,13 +197,13 @@
                         12 Constituencies
                     </span>
                 </div>
-                <div class="relative h-64">
+                <div class="relative h-56 sm:h-64">
                     <canvas id="constituencyChart"></canvas>
                 </div>
             </div>
 
             {{-- Doughnut / Gauge Chart on RIGHT (1 col) --}}
-            <div class="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div class="dashboard-panel bg-white rounded-3xl border border-gray-200 p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-3">
                     <div>
                         <h3 class="text-base font-black text-gray-950 flex items-center gap-2">
@@ -217,7 +217,7 @@
                         {{ $transPct }}% Done
                     </span>
                 </div>
-                <div class="relative h-56 flex items-center justify-center">
+                <div class="relative h-52 flex items-center justify-center">
                     <canvas id="transmissionGaugeChart"></canvas>
                 </div>
                 <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-extrabold">
@@ -250,8 +250,8 @@
                 foreach($constituency->wards as $ward) {
                     foreach($ward->pollingStations as $station) {
                         $cStations++;
-                        $latest = $station->submissions->first();
-                        if($latest) {
+                        $latest = $station->latestSubmission;
+                        if($latest && $latest->status === 'verified') {
                             $cReported++;
                             $cVotes += $latest->total_votes_cast;
                             $cSpoilt += $latest->spoilt_votes;
@@ -260,8 +260,8 @@
                     }
                 }
             @endphp
-            <div class="px-6 py-4 hover:bg-green-50/30 transition-colors" x-data="{ open: false }">
-                <div class="flex items-center justify-between cursor-pointer" @click="open = !open">
+            <div class="px-4 sm:px-6 py-4 hover:bg-emerald-50/50 transition-colors" x-data="{ open: false }">
+                <button type="button" class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-left cursor-pointer" @click="open = !open" :aria-expanded="open.toString()">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-green-700 text-white rounded-xl flex items-center justify-center font-extrabold text-sm shadow-sm">
                             {{ strtoupper(substr($constituency->name, 0, 2)) }}
@@ -271,7 +271,7 @@
                             <p class="text-xs text-gray-500">{{ $cReported }} / {{ $cStations }} stations transmitted</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-6 text-right">
+                    <div class="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 text-right w-full sm:w-auto">
                         <div>
                             <p class="font-extrabold text-gray-900">{{ number_format($cVotes) }}</p>
                             <p class="text-[11px] text-gray-500 uppercase font-medium">votes cast</p>
@@ -283,8 +283,8 @@
                         </div>
                         <svg class="w-5 h-5 text-gray-400 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                     </div>
-                </div>
-                <div x-show="open" x-collapse class="mt-4 pl-12 space-y-2 border-t border-gray-100 pt-3">
+                </button>
+                <div x-show="open" x-transition class="mt-4 sm:pl-12 space-y-2 border-t border-gray-100 pt-3">
                     <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Wards in {{ $constituency->name }}</p>
                     @foreach($constituency->wards as $ward)
                     <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-xl">

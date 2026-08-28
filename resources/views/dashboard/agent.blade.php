@@ -2,12 +2,13 @@
 @section('title', 'Agent Dashboard')
 
 @section('content')
-<div class="space-y-6">
+<div class="dashboard-shell space-y-6">
 
     {{-- Welcome Banner --}}
-    <div class="bg-gradient-to-br from-green-700 to-green-800 rounded-2xl p-6 text-white shadow-xl">
-        <h2 class="text-2xl font-bold">Welcome, {{ auth()->user()->name }}</h2>
-        <p class="text-green-100 mt-1">Submit and track your polling station reports below.</p>
+    <div class="dashboard-hero bg-linear-to-br from-emerald-950 via-emerald-800 to-green-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
+        <p class="text-xs uppercase tracking-[0.18em] font-black text-amber-300">Field operations console</p>
+        <h2 class="text-2xl sm:text-3xl font-black mt-2">Welcome, {{ auth()->user()->name }}</h2>
+        <p class="text-emerald-50 mt-1">Submit and track polling station reports with a clear verification trail.</p>
         <div class="mt-4 flex flex-wrap gap-3">
             <a href="{{ route('votes.create') }}" class="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all backdrop-blur-sm">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -17,29 +18,30 @@
     </div>
 
     {{-- My Stats --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm text-center">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="dashboard-metric bg-white rounded-2xl border border-gray-200 p-5 shadow-sm text-center">
             <p class="text-3xl font-bold text-gray-900">{{ $totalSubmitted }}</p>
             <p class="text-xs text-gray-500 uppercase tracking-wider mt-1">Total Submitted</p>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm text-center">
+        <div class="dashboard-metric bg-white rounded-2xl border border-gray-200 p-5 shadow-sm text-center">
             <p class="text-3xl font-bold text-green-600">{{ $verified }}</p>
             <p class="text-xs text-gray-500 uppercase tracking-wider mt-1">Verified</p>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm text-center">
+        <div class="dashboard-metric bg-white rounded-2xl border border-gray-200 p-5 shadow-sm text-center">
             <p class="text-3xl font-bold text-amber-600">{{ $pending }}</p>
             <p class="text-xs text-gray-500 uppercase tracking-wider mt-1">Pending</p>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm text-center">
+        <div class="dashboard-metric bg-white rounded-2xl border border-gray-200 p-5 shadow-sm text-center">
             <p class="text-3xl font-bold text-red-600">{{ $rejected }}</p>
             <p class="text-xs text-gray-500 uppercase tracking-wider mt-1">Rejected</p>
         </div>
     </div>
 
     {{-- My Submissions --}}
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100">
-            <h3 class="text-lg font-bold text-gray-900">My Submissions</h3>
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-4 sm:px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <h3 class="text-lg font-black text-gray-950">My Submissions</h3>
+            <p class="text-sm text-gray-700 mt-1">Recent reports and their verification status.</p>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">

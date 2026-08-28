@@ -30,6 +30,7 @@ class DashboardController extends Controller
         $pendingSubmissions = VoteSubmission::where('status', 'pending')->count();
         $totalStations = PollingStation::count();
         $stationsReported = VoteSubmission::select('polling_station_id')
+            ->where('status', 'verified')
             ->distinct()
             ->count('polling_station_id');
 
@@ -89,6 +90,7 @@ class DashboardController extends Controller
 
         // ── Constituency Performance Summary ──
         $constituencySummary = Constituency::withCount('pollingStations')
+            ->with('wards:id,constituency_id')
             ->get()
             ->map(function ($const) {
                 $stationIds = PollingStation::whereIn('ward_id', $const->wards->pluck('id'))->pluck('id');
@@ -111,9 +113,7 @@ class DashboardController extends Controller
                 ];
             });
 
-        $constituencies = Constituency::with(['wards.pollingStations.submissions' => function ($q) {
-            $q->latest('submitted_at')->limit(1);
-        }])->get();
+        $constituencies = Constituency::with('wards.pollingStations.latestSubmission')->get();
 
         $electionTypes = ElectionType::where('is_active', true)->get();
 
