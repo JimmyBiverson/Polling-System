@@ -55,4 +55,24 @@ Route::prefix('manage')->name('manage.')->middleware(['auth', 'admin'])->group(f
 
     Route::post('/election-types', [ManageController::class, 'storeElectionType'])->name('electionTypes.store');
     Route::delete('/election-types/{electionType}', [ManageController::class, 'destroyElectionType'])->name('electionTypes.destroy');
+
+    // ── Super Admin User & Role Management ─────────────────
+    Route::get('/users', [ManageController::class, 'users'])->name('users.index');
+    Route::post('/users', [ManageController::class, 'storeUser'])->name('users.store');
+    Route::put('/users/{user}', [ManageController::class, 'updateUser'])->name('users.update');
+    Route::post('/users/{user}/toggle-status', [ManageController::class, 'toggleUserStatus'])->name('users.toggleStatus');
+    Route::post('/users/{user}/reset-password', [ManageController::class, 'resetUserPassword'])->name('users.resetPassword');
+    Route::delete('/users/{user}', [ManageController::class, 'destroyUser'])->name('users.destroy');
+
+    // ── Super Admin Security Audit Logs ─────────────────────
+    Route::get('/audit-logs', [ManageController::class, 'auditLogs'])->name('auditLogs');
+
+    // ── Super Admin System Data & Reset Controls ───────────
+    Route::post('/re-tally', [ManageController::class, 'reTally'])->name('reTally');
+    Route::post('/clear-test-data', [ManageController::class, 'clearTestData'])->name('clearTestData');
 });
+
+// ── Super Admin Submission Overrides ───────────────────────
+Route::post('/submission/{submission}/override', [VoteSubmissionController::class, 'overrideStatus'])
+    ->middleware(['auth', 'admin'])
+    ->name('votes.override');

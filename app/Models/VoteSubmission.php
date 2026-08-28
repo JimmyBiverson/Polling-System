@@ -63,6 +63,7 @@ class VoteSubmission extends Model
             $this->registered_voters,
             $this->submitted_at,
         ]);
+
         return hash('sha256', $data);
     }
 }

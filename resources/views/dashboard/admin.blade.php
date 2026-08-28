@@ -96,110 +96,132 @@
         </div>
     </div>
 
-    {{-- Interactive Graphical Analytics Section (Chart.js Visuals) --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        {{-- 1. Governor Candidate Lead Race (Bar Chart) --}}
-        <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-green-600"></span>
-                        Governor Candidate Tally Standings
-                    </h2>
-                    <p class="text-xs text-gray-500">Real-time candidate vote totals & leading percentages in Kakamega County</p>
-                </div>
-                <span class="text-xs font-semibold bg-green-50 text-green-700 px-3 py-1 rounded-full border border-green-200">
-                    Governor Race
-                </span>
-            </div>
-            <div class="relative h-64 sm:h-72">
-                <canvas id="governorRaceChart"></canvas>
-            </div>
-            @if(count($governorCandidatesData) > 0)
-            <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between text-xs">
-                <span class="text-gray-500">Leading Candidate:</span>
-                <span class="font-bold text-green-700 bg-green-100 px-2.5 py-1 rounded-lg">
-                    🏆 {{ $governorCandidatesData[0]['name'] }} ({{ $governorCandidatesData[0]['party'] }}) — {{ number_format($governorCandidatesData[0]['votes']) }} votes ({{ $governorCandidatesData[0]['percentage'] }}%)
-                </span>
-            </div>
-            @endif
+    {{-- Interactive Graphical Analytics Section: 2x2 Side-by-Side Professional Visual Grid --}}
+    <div class="space-y-4">
+        <div class="flex items-center justify-between">
+            <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <svg class="w-5 h-5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                <span>Live Visual Analytics Command Center</span>
+            </h2>
+            <span class="text-xs font-semibold bg-gray-100 text-gray-700 px-3 py-1 rounded-full border border-gray-200">
+                Side-by-Side 2x2 Grid View
+            </span>
         </div>
 
-        {{-- 2. Voter Demographic & Age Bracket Distribution (Doughnut Chart) --}}
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col justify-between">
-            <div>
-                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2 mb-1">
-                    <span class="w-3 h-3 rounded-full bg-blue-600"></span>
-                    Voter Age Bracket Demographics
-                </h2>
-                <p class="text-xs text-gray-500 mb-4">Voter turnout distribution across age brackets</p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            {{-- Card 1 (Top Left): Governor Candidate Lead Race --}}
+            <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-green-600"></span>
+                            Governor Candidate Tally Standings
+                        </h3>
+                        <p class="text-xs text-gray-500">Candidate vote totals & leading percentages in Kakamega</p>
+                    </div>
+                    <span class="text-[11px] font-semibold bg-green-50 text-green-700 px-2.5 py-0.5 rounded-full border border-green-200">
+                        Governor Race
+                    </span>
+                </div>
+                <div class="relative h-56">
+                    <canvas id="governorRaceChart"></canvas>
+                </div>
+                @if(count($governorCandidatesData) > 0)
+                <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs">
+                    <span class="text-gray-500">Leading Candidate:</span>
+                    <span class="font-bold text-green-800 bg-green-100 px-2.5 py-0.5 rounded-lg border border-green-200">
+                        🏆 {{ $governorCandidatesData[0]['name'] }} ({{ $governorCandidatesData[0]['party'] }}) — {{ number_format($governorCandidatesData[0]['votes']) }} votes ({{ $governorCandidatesData[0]['percentage'] }}%)
+                    </span>
+                </div>
+                @endif
             </div>
-            <div class="relative h-56 flex items-center justify-center">
-                <canvas id="demographicsChart"></canvas>
+
+            {{-- Card 2 (Top Right): Voter Age Bracket Demographics --}}
+            <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+                            Voter Age Bracket Demographics
+                        </h3>
+                        <p class="text-xs text-gray-500">Voter turnout distribution across age brackets</p>
+                    </div>
+                    <span class="text-[11px] font-semibold bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full border border-blue-200">
+                        Kakamega Demographics
+                    </span>
+                </div>
+                <div class="relative h-52 flex items-center justify-center">
+                    <canvas id="demographicsChart"></canvas>
+                </div>
+                <div class="mt-3 grid grid-cols-2 gap-2 text-xs pt-3 border-t border-gray-100">
+                    <div class="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-lg">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+                        <span class="text-gray-600">Youth (18–25): <strong class="text-gray-900">28%</strong></span>
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-lg">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
+                        <span class="text-gray-600">Young (26–35): <strong class="text-gray-900">34%</strong></span>
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-lg">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                        <span class="text-gray-600">Middle (36–55): <strong class="text-gray-900">26%</strong></span>
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-lg">
+                        <span class="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block"></span>
+                        <span class="text-gray-600">Seniors (56+): <strong class="text-gray-900">12%</strong></span>
+                    </div>
+                </div>
             </div>
-            <div class="mt-4 grid grid-cols-2 gap-2 text-xs pt-3 border-t border-gray-100">
-                <div class="flex items-center gap-1.5">
-                    <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
-                    <span class="text-gray-600">Youth (18–25): <strong class="text-gray-900">28%</strong></span>
+
+            {{-- Card 3 (Bottom Left): Station Transmission Status Gauge --}}
+            <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-indigo-600"></span>
+                            Station Transmission Progress
+                        </h3>
+                        <p class="text-xs text-gray-500">Transmitted vs Outstanding Form 34A Reports</p>
+                    </div>
+                    @php $transPct = $totalStations > 0 ? round(($stationsReported / $totalStations) * 100) : 0; @endphp
+                    <span class="text-[11px] font-extrabold bg-indigo-50 text-indigo-700 px-2.5 py-0.5 rounded-full border border-indigo-200">
+                        {{ $transPct }}% Complete
+                    </span>
                 </div>
-                <div class="flex items-center gap-1.5">
-                    <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
-                    <span class="text-gray-600">Young (26–35): <strong class="text-gray-900">34%</strong></span>
+                <div class="relative h-52 flex items-center justify-center">
+                    <canvas id="transmissionGaugeChart"></canvas>
                 </div>
-                <div class="flex items-center gap-1.5">
-                    <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
-                    <span class="text-gray-600">Middle (36–55): <strong class="text-gray-900">26%</strong></span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
-                    <span class="text-gray-600">Seniors (56+): <strong class="text-gray-900">12%</strong></span>
+                <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-semibold">
+                    <span class="text-green-700 bg-green-50 px-2.5 py-1 rounded-lg border border-green-200">
+                        Transmitted: {{ number_format($stationsReported) }} stations
+                    </span>
+                    <span class="text-gray-600 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-200">
+                        Outstanding: {{ number_format(max($totalStations - $stationsReported, 0)) }} stations
+                    </span>
                 </div>
             </div>
+
+            {{-- Card 4 (Bottom Right): Constituency Cast Votes vs Spoilt Ballots Summary --}}
+            <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-amber-600"></span>
+                            Constituency Votes & Spoilt Ballots Summary
+                        </h3>
+                        <p class="text-xs text-gray-500">Valid votes cast vs spoilt ballots per constituency</p>
+                    </div>
+                    <span class="text-[11px] font-semibold bg-gray-100 text-gray-700 px-2.5 py-0.5 rounded-full">
+                        12 Constituencies
+                    </span>
+                </div>
+                <div class="relative h-56">
+                    <canvas id="constituencyChart"></canvas>
+                </div>
+            </div>
+
         </div>
-
-    </div>
-
-    {{-- Secondary Graphic Section: Polling Transmission Gauge & Constituency Grouped Bar Chart --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        {{-- 3. Polling Transmission Status & Turnout Gauge --}}
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col justify-between">
-            <div>
-                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2 mb-1">
-                    <span class="w-3 h-3 rounded-full bg-indigo-600"></span>
-                    Station Transmission Status
-                </h2>
-                <p class="text-xs text-gray-500 mb-4">Transmitted vs Outstanding Form 34A Reports</p>
-            </div>
-            <div class="relative h-56 flex items-center justify-center">
-                <canvas id="transmissionGaugeChart"></canvas>
-            </div>
-            <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-medium">
-                <span class="text-green-700">Transmitted: {{ $stationsReported }} stations</span>
-                <span class="text-gray-400">Remaining: {{ $totalStations - $stationsReported }} stations</span>
-            </div>
-        </div>
-
-        {{-- 4. Constituency Cast Votes vs Spoilt Votes (Grouped Bar Chart) --}}
-        <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full bg-amber-600"></span>
-                        Constituency Votes & Spoilt Ballots Summary
-                    </h2>
-                    <p class="text-xs text-gray-500">Comparison of total votes cast vs spoilt votes per constituency</p>
-                </div>
-                <span class="text-xs font-semibold bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
-                    12 Constituencies
-                </span>
-            </div>
-            <div class="relative h-64">
-                <canvas id="constituencyChart"></canvas>
-            </div>
-        </div>
-
     </div>
 
     {{-- Constituency List Breakdown --}}

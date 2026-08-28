@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
 use App\Models\Candidate;
+use App\Models\Constituency;
+use App\Models\County;
 use App\Models\ElectionType;
 use App\Models\PollingStation;
 use App\Models\VoteDetail;
@@ -91,10 +93,11 @@ class VoteSubmissionController extends Controller
             DB::commit();
 
             return redirect()->route('dashboard')
-                ->with('success', 'Report submitted successfully! Submission #' . $submission->id);
+                ->with('success', 'Report submitted successfully! Submission #'.$submission->id);
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Submission failed: ' . $e->getMessage());
+
+            return back()->withInput()->with('error', 'Submission failed: '.$e->getMessage());
         }
     }
 
@@ -121,7 +124,7 @@ class VoteSubmissionController extends Controller
 
         AuditLog::create([
             'user_id' => Auth::id(),
-            'action' => 'submission_' . $request->status,
+            'action' => 'submission_'.$request->status,
             'model_type' => VoteSubmission::class,
             'model_id' => $submission->id,
             'new_values' => ['status' => $request->status, 'notes' => $request->notes],
@@ -132,6 +135,38 @@ class VoteSubmissionController extends Controller
         return back()->with('success', "Submission #{$submission->id} {$request->status}.");
     }
 
+    public function overrideStatus(Request $request, VoteSubmission $submission)
+    {
+        if (! Auth::user()->isAdmin()) {
+            abort(403, 'Super Admin override privileges required.');
+        }
+
+        $request->validate([
+            'status' => 'required|in:verified,pending,rejected,disputed',
+            'notes' => 'required|string|max:500',
+        ]);
+
+        $oldStatus = $submission->status;
+        $submission->update([
+            'status' => $request->status,
+            'notes' => '[SUPER ADMIN OVERRIDE] '.$request->notes,
+            'verified_at' => now(),
+            'verified_by' => Auth::id(),
+        ]);
+
+        AuditLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'super_admin_override',
+            'model_type' => VoteSubmission::class,
+            'model_id' => $submission->id,
+            'new_values' => ['old_status' => $oldStatus, 'new_status' => $request->status, 'notes' => $request->notes],
+            'ip_address' => $request->ip(),
+            'description' => "Super Admin override on Submission #{$submission->id}: {$oldStatus} -> {$request->status}",
+        ]);
+
+        return back()->with('success', "Super Admin override executed on Submission #{$submission->id}. Status changed from {$oldStatus} to {$request->status}.");
+    }
+
     public function bulkStore(Request $request)
     {
         $request->validate([
@@ -139,7 +174,7 @@ class VoteSubmissionController extends Controller
             'bulk_data' => 'required|string',
         ]);
 
-        $lines = array_filter(explode("\n", $request->bulk_data), fn($l) => trim($l) !== '');
+        $lines = array_filter(explode("\n", $request->bulk_data), fn ($l) => trim($l) !== '');
         $results = ['success' => 0, 'errors' => 0, 'details' => []];
 
         DB::beginTransaction();
@@ -157,7 +192,8 @@ class VoteSubmissionController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Bulk processing failed: ' . $e->getMessage());
+
+            return back()->with('error', 'Bulk processing failed: '.$e->getMessage());
         }
 
         return back()->with('bulk_results', $results);
@@ -192,7 +228,9 @@ class VoteSubmissionController extends Controller
         $candidates = [];
         for ($i = $candStart; $i < $candEnd; $i++) {
             $pair = explode(':', $fields[$i]);
-            if (count($pair) !== 2) continue;
+            if (count($pair) !== 2) {
+                continue;
+            }
             $candidates[] = ['name' => trim($pair[0]), 'votes' => (int) trim($pair[1])];
         }
 
@@ -200,17 +238,17 @@ class VoteSubmissionController extends Controller
             return ['success' => false, 'line' => $lineNum, 'message' => 'No valid candidate:votes pairs.'];
         }
 
-        $constituency = \App\Models\Constituency::where('name', 'like', "%{$constName}%")->first();
-        if (!$constituency) {
-            $county = \App\Models\County::first();
-            $constituency = \App\Models\Constituency::create([
+        $constituency = Constituency::where('name', 'like', "%{$constName}%")->first();
+        if (! $constituency) {
+            $county = County::first();
+            $constituency = Constituency::create([
                 'county_id' => $county->id ?? 1,
                 'name' => $constName,
             ]);
         }
 
         $ward = Ward::where('name', 'like', "%{$wardName}%")->first();
-        if (!$ward) {
+        if (! $ward) {
             $ward = Ward::create([
                 'constituency_id' => $constituency->id,
                 'name' => $wardName,
@@ -220,7 +258,7 @@ class VoteSubmissionController extends Controller
         $station = PollingStation::where('name', 'like', "%{$stationName}%")->where('ward_id', $ward->id)->first();
         $isNew = false;
 
-        if (!$station) {
+        if (! $station) {
             $station = PollingStation::create([
                 'ward_id' => $ward->id,
                 'name' => $stationName,
@@ -261,7 +299,7 @@ class VoteSubmissionController extends Controller
         return [
             'success' => true,
             'line' => $lineNum,
-            'message' => $isNew ? "New station created & votes saved" : "Votes updated",
+            'message' => $isNew ? 'New station created & votes saved' : 'Votes updated',
             'station' => $stationName,
         ];
     }

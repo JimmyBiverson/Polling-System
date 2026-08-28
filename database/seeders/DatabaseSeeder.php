@@ -8,6 +8,8 @@ use App\Models\County;
 use App\Models\ElectionType;
 use App\Models\PollingStation;
 use App\Models\User;
+use App\Models\VoteDetail;
+use App\Models\VoteSubmission;
 use App\Models\Ward;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -155,7 +157,7 @@ class DatabaseSeeder extends Seeder
 
         foreach ($realStations as $wardName => $stations) {
             foreach ($stations as $sName) {
-                if (!PollingStation::where('ward_id', $wards[$wardName]->id)->where('name', $sName)->exists()) {
+                if (! PollingStation::where('ward_id', $wards[$wardName]->id)->where('name', $sName)->exists()) {
                     PollingStation::create([
                         'ward_id' => $wards[$wardName]->id,
                         'name' => $sName,
@@ -226,13 +228,13 @@ class DatabaseSeeder extends Seeder
             $totalCast = $b1 + $b2 + $b3 + $spoilt;
             $registered = max($station->registered_voters, $totalCast + rand(50, 200));
 
-            $submission = \App\Models\VoteSubmission::create([
+            $submission = VoteSubmission::create([
                 'polling_station_id' => $station->id,
                 'election_type_id' => $electionTypes['Governor']->id,
                 'user_id' => $admin1->id,
-                'agent_name' => 'Agent ' . ($idx + 1),
-                'agent_code' => 'E0987' . str_pad($idx, 4, '0', STR_PAD_LEFT),
-                'presiding_officer' => 'PO Officer ' . chr(65 + ($idx % 26)),
+                'agent_name' => 'Agent '.($idx + 1),
+                'agent_code' => 'E0987'.str_pad($idx, 4, '0', STR_PAD_LEFT),
+                'presiding_officer' => 'PO Officer '.chr(65 + ($idx % 26)),
                 'spoilt_votes' => $spoilt,
                 'total_votes_cast' => $totalCast,
                 'registered_voters' => $registered,
@@ -242,15 +244,15 @@ class DatabaseSeeder extends Seeder
             ]);
 
             if ($govCandidates->count() >= 3) {
-                \App\Models\VoteDetail::create(['vote_submission_id' => $submission->id, 'candidate_id' => $govCandidates[0]->id, 'votes' => $b1]);
-                \App\Models\VoteDetail::create(['vote_submission_id' => $submission->id, 'candidate_id' => $govCandidates[1]->id, 'votes' => $b2]);
-                \App\Models\VoteDetail::create(['vote_submission_id' => $submission->id, 'candidate_id' => $govCandidates[2]->id, 'votes' => $b3]);
+                VoteDetail::create(['vote_submission_id' => $submission->id, 'candidate_id' => $govCandidates[0]->id, 'votes' => $b1]);
+                VoteDetail::create(['vote_submission_id' => $submission->id, 'candidate_id' => $govCandidates[1]->id, 'votes' => $b2]);
+                VoteDetail::create(['vote_submission_id' => $submission->id, 'candidate_id' => $govCandidates[2]->id, 'votes' => $b3]);
             }
 
             $submission->submission_hash = $submission->generateHash();
             $submission->save();
         }
 
-        echo "Seeded: 8 users, 1 county, 12 constituencies, " . count($wards) . " wards, {$stationCount} stations, 5 election types, " . Candidate::count() . " candidates, and " . \App\Models\VoteSubmission::count() . " vote submissions.\n";
+        echo 'Seeded: 8 users, 1 county, 12 constituencies, '.count($wards)." wards, {$stationCount} stations, 5 election types, ".Candidate::count().' candidates, and '.VoteSubmission::count()." vote submissions.\n";
     }
 }

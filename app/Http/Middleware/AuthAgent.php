@@ -10,12 +10,13 @@ class AuthAgent
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return redirect()->route('login');
         }
 
-        if (!auth()->user()->is_active) {
+        if (! auth()->user()->is_active) {
             auth()->logout();
+
             return redirect()->route('login')->with('error', 'Account deactivated.');
         }
 

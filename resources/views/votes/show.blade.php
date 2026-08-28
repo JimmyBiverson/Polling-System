@@ -86,17 +86,25 @@
     </div>
 
     {{-- Admin Verification --}}
-    @if(auth()->user()->isAdmin() && $submission->status === 'pending')
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6" x-data="{ notesText: '' }">
-        <h3 class="text-lg font-bold text-gray-900 mb-4">Admin Form 34A Verification</h3>
-        <div class="space-y-4">
-            <textarea x-model="notesText" rows="2" placeholder="Add verification audit notes (optional)..." class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500"></textarea>
+    @if(auth()->user()->isAdmin())
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6" x-data="{ notesText: '', statusVal: '{{ $submission->status }}' }">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
+            <h3 class="text-lg font-bold text-gray-900">Admin Form 34A Governance & Status Controls</h3>
+            <span class="inline-flex items-center gap-1 text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full border border-amber-300">
+                👑 Super Admin Override Privileges
+            </span>
+        </div>
+
+        @if($submission->status === 'pending')
+        <div class="space-y-4 mb-6 pb-6 border-b border-gray-100">
+            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Standard Verification Action</h4>
+            <textarea x-model="notesText" rows="2" placeholder="Add verification audit notes (optional)..." class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 bg-gray-50"></textarea>
             <div class="flex gap-3">
                 <form method="POST" action="{{ route('votes.verify', $submission) }}">
                     @csrf
                     <input type="hidden" name="status" value="verified">
                     <input type="hidden" name="notes" :value="notesText">
-                    <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md flex items-center gap-2">
+                    <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md flex items-center gap-2 text-xs sm:text-sm">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                         Approve & Verify Form 34A
                     </button>
@@ -105,13 +113,41 @@
                     @csrf
                     <input type="hidden" name="status" value="rejected">
                     <input type="hidden" name="notes" :value="notesText">
-                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md flex items-center gap-2">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md flex items-center gap-2 text-xs sm:text-sm">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                         Reject Submission
                     </button>
                 </form>
             </div>
         </div>
+        @endif
+
+        {{-- Super Admin Override Form --}}
+        <form method="POST" action="{{ route('votes.override', $submission) }}" class="space-y-4 bg-amber-50/50 p-4 rounded-xl border border-amber-200/60">
+            @csrf
+            <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider">Super Admin Status Override & Audit Notes</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Target Status</label>
+                    <select name="status" x-model="statusVal" required class="w-full px-3 py-2 border border-amber-300 rounded-xl text-xs font-bold bg-white focus:ring-2 focus:ring-amber-500">
+                        <option value="verified">Verified (Approved for Tally)</option>
+                        <option value="pending">Pending (Under Inspection)</option>
+                        <option value="disputed">Disputed (Flagged for Audit)</option>
+                        <option value="rejected">Rejected (Invalidated)</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Mandatory Override Audit Justification</label>
+                    <input type="text" name="notes" required placeholder="State official reason for status override..." class="w-full px-3 py-2 border border-amber-300 rounded-xl text-xs bg-white focus:ring-2 focus:ring-amber-500">
+                </div>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2 px-5 rounded-xl text-xs shadow-md transition-all flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    Apply Super Admin Override
+                </button>
+            </div>
+        </form>
     </div>
     @endif
 

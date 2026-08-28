@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Candidate;
 use App\Models\PollingStation;
-use Illuminate\Http\Request;
+use App\Models\VoteSubmission;
+use App\Models\Ward;
 
 class ApiController extends Controller
 {
     public function wardsByConstituency($constituencyId)
     {
-        $wards = \App\Models\Ward::where('constituency_id', $constituencyId)
+        $wards = Ward::where('constituency_id', $constituencyId)
             ->orderBy('name')
             ->get(['id', 'name']);
 
@@ -27,7 +29,7 @@ class ApiController extends Controller
 
     public function candidatesByElection($electionTypeId)
     {
-        $candidates = \App\Models\Candidate::where('election_type_id', $electionTypeId)
+        $candidates = Candidate::where('election_type_id', $electionTypeId)
             ->orderBy('name')
             ->get(['id', 'name', 'party']);
 
@@ -36,9 +38,9 @@ class ApiController extends Controller
 
     public function liveStats()
     {
-        $total = \App\Models\VoteSubmission::count();
-        $verified = \App\Models\VoteSubmission::where('status', 'verified')->count();
-        $pending = \App\Models\VoteSubmission::where('status', 'pending')->count();
+        $total = VoteSubmission::count();
+        $verified = VoteSubmission::where('status', 'verified')->count();
+        $pending = VoteSubmission::where('status', 'pending')->count();
 
         return response()->json([
             'total' => $total,

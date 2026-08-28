@@ -2,17 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AuditLog;
 use App\Models\Candidate;
 use App\Models\Constituency;
 use App\Models\ElectionType;
 use App\Models\PollingStation;
 use App\Models\VoteDetail;
 use App\Models\VoteSubmission;
-use App\Models\Ward;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -75,7 +71,7 @@ class DashboardController extends Controller
                     'percentage' => $pct,
                 ];
             }
-            usort($governorCandidatesData, fn($a, $b) => $b['votes'] <=> $a['votes']);
+            usort($governorCandidatesData, fn ($a, $b) => $b['votes'] <=> $a['votes']);
         }
 
         // ── Demographics & Age Bracket Insights (Kakamega Registered Voters) ──

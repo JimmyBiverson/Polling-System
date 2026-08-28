@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('dashboard');
         }
+
         return view('auth.login');
     }
 
@@ -28,9 +30,9 @@ class AuthController extends Controller
 
         $input = trim($request->email);
         $email = $input;
-        if (!str_contains($input, '@')) {
+        if (! str_contains($input, '@')) {
             if (in_array(strtolower($input), ['admin1', 'admin2', 'admin3', 'admin4'])) {
-                $email = strtolower($input) . '@polling.go.ke';
+                $email = strtolower($input).'@polling.go.ke';
             } elseif (strtolower($input) === 'admin') {
                 $email = 'admin@polling.go.ke';
             } elseif (strtolower($input) === 'county') {
@@ -38,19 +40,19 @@ class AuthController extends Controller
             } elseif (strtolower($input) === 'agent' || strtolower($input) === 'alice') {
                 $email = 'alice@agent.go.ke';
             } else {
-                $email = strtolower($input) . '@polling.go.ke';
+                $email = strtolower($input).'@polling.go.ke';
             }
         }
 
         $user = User::where('email', $email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials do not match our records.'],
             ]);
         }
 
-        if (!$user->is_active) {
+        if (! $user->is_active) {
             throw ValidationException::withMessages([
                 'email' => ['Your account has been deactivated.'],
             ]);
@@ -60,7 +62,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        \App\Models\AuditLog::create([
+        AuditLog::create([
             'user_id' => $user->id,
             'action' => 'login',
             'ip_address' => $request->ip(),
@@ -72,7 +74,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        \App\Models\AuditLog::create([
+        AuditLog::create([
             'user_id' => Auth::id(),
             'action' => 'logout',
             'ip_address' => $request->ip(),
