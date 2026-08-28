@@ -5,25 +5,25 @@
 <div class="space-y-6" x-data="dashboard()">
 
     {{-- Live Tallying Stream Header --}}
-    <div class="bg-gradient-to-r from-gray-900 via-green-950 to-gray-900 text-white rounded-3xl p-6 shadow-xl border border-green-800/40 relative overflow-hidden">
-        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-green-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+    <div class="bg-gradient-to-r from-gray-950 via-emerald-950 to-gray-950 text-white rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-emerald-600/40 relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
             <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-300 text-xs font-semibold border border-green-500/30 mb-2">
-                    <span class="w-2 h-2 rounded-full bg-green-400 animate-ping"></span>
-                    <span>Live Transmission Stream Active — Kakamega County Tallying Center</span>
+                <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500 text-gray-950 text-xs font-black shadow-lg shadow-emerald-500/20 mb-3">
+                    <span class="w-2.5 h-2.5 rounded-full bg-gray-950 animate-ping"></span>
+                    <span class="uppercase tracking-wide">Live Transmission Stream Active — Kakamega County Tallying Center</span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Electoral Command & Analytics Center</h1>
-                <p class="text-gray-300 text-xs sm:text-sm mt-1">Form 34A & 34B Real-time Results Processing (12 Constituencies, 60 Wards)</p>
+                <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight drop-shadow-sm">Electoral Command & Analytics Center</h1>
+                <p class="text-amber-300 text-sm sm:text-base font-bold mt-1.5">Form 34A & 34B Real-time Results Processing (12 Constituencies, 60 Wards)</p>
             </div>
-            <div class="flex items-center gap-3">
-                <button @click="showBulkModal = true" class="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white font-semibold text-xs sm:text-sm py-2.5 px-5 rounded-xl shadow-lg shadow-green-600/30 transition-all flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <div class="flex flex-wrap items-center gap-3">
+                <button @click="showBulkModal = true" class="bg-emerald-400 hover:bg-emerald-300 text-gray-950 font-black text-xs sm:text-sm py-3 px-6 rounded-2xl shadow-xl shadow-emerald-400/20 transition-all flex items-center gap-2 border border-emerald-300">
+                    <svg class="w-5 h-5 text-gray-950" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
                     <span>WhatsApp Bulk Paste</span>
                 </button>
-                <button @click="location.reload()" class="bg-white/10 hover:bg-white/20 text-white font-medium text-xs sm:text-sm py-2.5 px-4 rounded-xl transition-all border border-white/10 flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                    <span>Refresh</span>
+                <button @click="location.reload()" class="bg-white hover:bg-gray-100 text-gray-950 font-black text-xs sm:text-sm py-3 px-5 rounded-2xl shadow-lg transition-all flex items-center gap-2 border border-gray-200">
+                    <svg class="w-5 h-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    <span>Refresh Data</span>
                 </button>
             </div>
         </div>
@@ -31,193 +31,202 @@
 
     {{-- Key Electoral Metrics --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+        <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Valid Votes</p>
-                    <p class="text-3xl font-extrabold text-gray-900 mt-1">{{ number_format($totalVotes) }}</p>
+                    <p class="text-xs font-bold text-gray-600 uppercase tracking-wider">Total Valid Votes</p>
+                    <p class="text-3xl font-black text-gray-950 mt-1">{{ number_format($totalVotes) }}</p>
                 </div>
-                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center border border-emerald-200">
+                    <svg class="w-6 h-6 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
             </div>
-            <div class="mt-3 flex items-center gap-2 text-xs font-medium">
-                <span class="text-green-700 bg-green-50 px-2 py-0.5 rounded-md border border-green-200">{{ $verifiedSubmissions }} verified</span>
-                <span class="text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">{{ $pendingSubmissions }} pending</span>
+            <div class="mt-3 flex items-center gap-2 text-xs font-extrabold">
+                <span class="text-emerald-900 bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-300">{{ $verifiedSubmissions }} verified</span>
+                <span class="text-amber-900 bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-300">{{ $pendingSubmissions }} pending</span>
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+        <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Spoilt / Rejected</p>
-                    <p class="text-3xl font-extrabold text-red-600 mt-1">{{ number_format($totalSpoilt) }}</p>
+                    <p class="text-xs font-bold text-gray-600 uppercase tracking-wider">Spoilt / Rejected</p>
+                    <p class="text-3xl font-black text-red-600 mt-1">{{ number_format($totalSpoilt) }}</p>
                 </div>
-                <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                <div class="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center border border-red-200">
+                    <svg class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
                 </div>
             </div>
-            <div class="mt-3 text-xs text-gray-500 font-medium">
+            <div class="mt-3 text-xs text-gray-700 font-extrabold">
                 @php $spoiltRate = $totalVotes > 0 ? round(($totalSpoilt / ($totalVotes + $totalSpoilt)) * 100, 1) : 0; @endphp
                 {{ $spoiltRate }}% of total ballots cast
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+        <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Registered Voters</p>
-                    <p class="text-3xl font-extrabold text-blue-900 mt-1">{{ number_format($totalRegistered) }}</p>
+                    <p class="text-xs font-bold text-gray-600 uppercase tracking-wider">Registered Voters</p>
+                    <p class="text-3xl font-black text-blue-950 mt-1">{{ number_format($totalRegistered) }}</p>
                 </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center border border-blue-200">
+                    <svg class="w-6 h-6 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 </div>
             </div>
-            <div class="mt-3 text-xs text-gray-500 font-medium">
+            <div class="mt-3 text-xs text-gray-700 font-extrabold">
                 Across {{ number_format($totalStations) }} polling stations
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+        <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Voter Turnout Rate</p>
-                    <p class="text-3xl font-extrabold mt-1 {{ $turnout >= 70 ? 'text-green-600' : ($turnout >= 50 ? 'text-amber-600' : 'text-red-600') }}">{{ $turnout }}%</p>
+                    <p class="text-xs font-bold text-gray-600 uppercase tracking-wider">Voter Turnout Rate</p>
+                    <p class="text-3xl font-black mt-1 {{ $turnout >= 70 ? 'text-emerald-600' : ($turnout >= 50 ? 'text-amber-600' : 'text-red-600') }}">{{ $turnout }}%</p>
                 </div>
-                <div class="w-12 h-12 {{ $turnout >= 70 ? 'bg-green-100' : ($turnout >= 50 ? 'bg-amber-100' : 'bg-red-100') }} rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 {{ $turnout >= 70 ? 'text-green-600' : ($turnout >= 50 ? 'text-amber-600' : 'text-red-600') }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <div class="w-12 h-12 {{ $turnout >= 70 ? 'bg-emerald-100 border-emerald-200' : ($turnout >= 50 ? 'bg-amber-100 border-amber-200' : 'bg-red-100 border-red-200') }} border rounded-2xl flex items-center justify-center">
+                    <svg class="w-6 h-6 {{ $turnout >= 70 ? 'text-emerald-700' : ($turnout >= 50 ? 'text-amber-700' : 'text-red-600') }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                 </div>
             </div>
             <div class="mt-3">
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="h-2 rounded-full {{ $turnout >= 70 ? 'bg-green-500' : ($turnout >= 50 ? 'bg-amber-500' : 'bg-red-500') }}" style="width: {{ min($turnout, 100) }}%"></div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div class="h-2.5 rounded-full {{ $turnout >= 70 ? 'bg-emerald-600' : ($turnout >= 50 ? 'bg-amber-500' : 'bg-red-500') }}" style="width: {{ min($turnout, 100) }}%"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Interactive Graphical Analytics Section: 2x2 Side-by-Side Professional Visual Grid --}}
-    <div class="space-y-4">
-        <div class="flex items-center justify-between">
-            <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                <svg class="w-5 h-5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                <span>Live Visual Analytics Command Center</span>
-            </h2>
-            <span class="text-xs font-semibold bg-gray-100 text-gray-700 px-3 py-1 rounded-full border border-gray-200">
-                Side-by-Side 2x2 Grid View
+    {{-- Interactive Graphical Analytics Section: Explicit Graph (Left) & Pie Chart (Right) Layout --}}
+    <div class="space-y-6">
+        <div class="flex items-center justify-between border-b border-gray-200 pb-3">
+            <div>
+                <h2 class="text-xl font-black text-gray-950 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    <span>Electoral Graphical Analytics & Demographics</span>
+                </h2>
+                <p class="text-xs text-gray-600 font-semibold">Side-by-Side Visuals: Bar Graphs on the Left, Pie & Doughnut Charts on the Right</p>
+            </div>
+            <span class="text-xs font-black bg-emerald-100 text-emerald-900 px-3 py-1 rounded-full border border-emerald-300 shadow-sm hidden sm:inline-block">
+                Live Interactive Visuals
             </span>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {{-- ROW 1: Governor Candidate Bar Graph (LEFT) vs Voter Demographics Pie Chart (RIGHT) --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {{-- Card 1 (Top Left): Governor Candidate Lead Race --}}
-            <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-                <div class="flex items-center justify-between mb-3">
+            {{-- Graph on LEFT (2 cols on lg screens) --}}
+            <div class="lg:col-span-2 bg-white rounded-3xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-4">
                     <div>
-                        <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-green-600"></span>
-                            Governor Candidate Tally Standings
+                        <h3 class="text-lg font-black text-gray-950 flex items-center gap-2">
+                            <span class="w-3.5 h-3.5 rounded-full bg-emerald-600"></span>
+                            Governor Candidate Tally Standings (Bar Graph)
                         </h3>
-                        <p class="text-xs text-gray-500">Candidate vote totals & leading percentages in Kakamega</p>
+                        <p class="text-xs text-gray-600 font-medium">Real-time candidate vote totals & leading percentages in Kakamega</p>
                     </div>
-                    <span class="text-[11px] font-semibold bg-green-50 text-green-700 px-2.5 py-0.5 rounded-full border border-green-200">
+                    <span class="text-xs font-black bg-emerald-100 text-emerald-900 px-3 py-1 rounded-full border border-emerald-300">
                         Governor Race
                     </span>
                 </div>
-                <div class="relative h-56">
+                <div class="relative h-64 sm:h-72">
                     <canvas id="governorRaceChart"></canvas>
                 </div>
                 @if(count($governorCandidatesData) > 0)
-                <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs">
-                    <span class="text-gray-500">Leading Candidate:</span>
-                    <span class="font-bold text-green-800 bg-green-100 px-2.5 py-0.5 rounded-lg border border-green-200">
+                <div class="mt-4 pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                    <span class="text-gray-600 font-bold">Leading Candidate:</span>
+                    <span class="font-black text-emerald-950 bg-emerald-100 px-3 py-1.5 rounded-xl border border-emerald-300">
                         🏆 {{ $governorCandidatesData[0]['name'] }} ({{ $governorCandidatesData[0]['party'] }}) — {{ number_format($governorCandidatesData[0]['votes']) }} votes ({{ $governorCandidatesData[0]['percentage'] }}%)
                     </span>
                 </div>
                 @endif
             </div>
 
-            {{-- Card 2 (Top Right): Voter Age Bracket Demographics --}}
-            <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+            {{-- Pie / Doughnut Chart on RIGHT (1 col) --}}
+            <div class="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-3">
                     <div>
-                        <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-blue-600"></span>
-                            Voter Age Bracket Demographics
+                        <h3 class="text-base font-black text-gray-950 flex items-center gap-2">
+                            <span class="w-3.5 h-3.5 rounded-full bg-blue-600"></span>
+                            Voter Age Demographics (Pie Chart)
                         </h3>
-                        <p class="text-xs text-gray-500">Voter turnout distribution across age brackets</p>
+                        <p class="text-xs text-gray-600 font-medium">Voter turnout distribution by age bracket</p>
                     </div>
-                    <span class="text-[11px] font-semibold bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full border border-blue-200">
-                        Kakamega Demographics
+                    <span class="text-xs font-bold bg-blue-100 text-blue-900 px-2.5 py-0.5 rounded-full border border-blue-200">
+                        Demographics
                     </span>
                 </div>
-                <div class="relative h-52 flex items-center justify-center">
+                <div class="relative h-56 flex items-center justify-center">
                     <canvas id="demographicsChart"></canvas>
                 </div>
-                <div class="mt-3 grid grid-cols-2 gap-2 text-xs pt-3 border-t border-gray-100">
-                    <div class="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-lg">
-                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-                        <span class="text-gray-600">Youth (18–25): <strong class="text-gray-900">28%</strong></span>
+                <div class="mt-4 grid grid-cols-2 gap-2 text-xs pt-3 border-t border-gray-100 font-extrabold">
+                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-100">
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                        <span class="text-gray-700">Youth (18–25): <strong class="text-gray-950">28%</strong></span>
                     </div>
-                    <div class="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-lg">
-                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
-                        <span class="text-gray-600">Young (26–35): <strong class="text-gray-900">34%</strong></span>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-100">
+                        <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
+                        <span class="text-gray-700">Young (26–35): <strong class="text-gray-950">34%</strong></span>
                     </div>
-                    <div class="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-lg">
-                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
-                        <span class="text-gray-600">Middle (36–55): <strong class="text-gray-900">26%</strong></span>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-100">
+                        <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                        <span class="text-gray-700">Middle (36–55): <strong class="text-gray-950">26%</strong></span>
                     </div>
-                    <div class="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-lg">
-                        <span class="w-2.5 h-2.5 rounded-full bg-purple-500 inline-block"></span>
-                        <span class="text-gray-600">Seniors (56+): <strong class="text-gray-900">12%</strong></span>
+                    <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-100">
+                        <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
+                        <span class="text-gray-700">Seniors (56+): <strong class="text-gray-950">12%</strong></span>
                     </div>
                 </div>
             </div>
 
-            {{-- Card 3 (Bottom Left): Station Transmission Status Gauge --}}
-            <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-                <div class="flex items-center justify-between mb-3">
-                    <div>
-                        <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-indigo-600"></span>
-                            Station Transmission Progress
-                        </h3>
-                        <p class="text-xs text-gray-500">Transmitted vs Outstanding Form 34A Reports</p>
-                    </div>
-                    @php $transPct = $totalStations > 0 ? round(($stationsReported / $totalStations) * 100) : 0; @endphp
-                    <span class="text-[11px] font-extrabold bg-indigo-50 text-indigo-700 px-2.5 py-0.5 rounded-full border border-indigo-200">
-                        {{ $transPct }}% Complete
-                    </span>
-                </div>
-                <div class="relative h-52 flex items-center justify-center">
-                    <canvas id="transmissionGaugeChart"></canvas>
-                </div>
-                <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-semibold">
-                    <span class="text-green-700 bg-green-50 px-2.5 py-1 rounded-lg border border-green-200">
-                        Transmitted: {{ number_format($stationsReported) }} stations
-                    </span>
-                    <span class="text-gray-600 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-200">
-                        Outstanding: {{ number_format(max($totalStations - $stationsReported, 0)) }} stations
-                    </span>
-                </div>
-            </div>
+        </div>
 
-            {{-- Card 4 (Bottom Right): Constituency Cast Votes vs Spoilt Ballots Summary --}}
-            <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-                <div class="flex items-center justify-between mb-3">
+        {{-- ROW 2: Constituency Votes Grouped Bar Graph (LEFT) vs Polling Transmission Gauge (RIGHT) --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            {{-- Grouped Bar Graph on LEFT (2 cols on lg screens) --}}
+            <div class="lg:col-span-2 bg-white rounded-3xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-4">
                     <div>
-                        <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-amber-600"></span>
-                            Constituency Votes & Spoilt Ballots Summary
+                        <h3 class="text-lg font-black text-gray-950 flex items-center gap-2">
+                            <span class="w-3.5 h-3.5 rounded-full bg-amber-600"></span>
+                            Constituency Votes & Spoilt Ballots (Grouped Graph)
                         </h3>
-                        <p class="text-xs text-gray-500">Valid votes cast vs spoilt ballots per constituency</p>
+                        <p class="text-xs text-gray-600 font-medium">Valid votes cast vs spoilt ballots per constituency in Kakamega</p>
                     </div>
-                    <span class="text-[11px] font-semibold bg-gray-100 text-gray-700 px-2.5 py-0.5 rounded-full">
+                    <span class="text-xs font-extrabold bg-gray-100 text-gray-900 px-3 py-1 rounded-full border border-gray-300">
                         12 Constituencies
                     </span>
                 </div>
-                <div class="relative h-56">
+                <div class="relative h-64">
                     <canvas id="constituencyChart"></canvas>
+                </div>
+            </div>
+
+            {{-- Doughnut / Gauge Chart on RIGHT (1 col) --}}
+            <div class="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h3 class="text-base font-black text-gray-950 flex items-center gap-2">
+                            <span class="w-3.5 h-3.5 rounded-full bg-indigo-600"></span>
+                            Station Transmission Progress (Gauge Chart)
+                        </h3>
+                        <p class="text-xs text-gray-600 font-medium">Transmitted vs Outstanding Form 34A Reports</p>
+                    </div>
+                    @php $transPct = $totalStations > 0 ? round(($stationsReported / $totalStations) * 100) : 0; @endphp
+                    <span class="text-xs font-black bg-indigo-100 text-indigo-900 px-2.5 py-0.5 rounded-full border border-indigo-200">
+                        {{ $transPct }}% Done
+                    </span>
+                </div>
+                <div class="relative h-56 flex items-center justify-center">
+                    <canvas id="transmissionGaugeChart"></canvas>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-extrabold">
+                    <span class="text-emerald-900 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                        Transmitted: {{ number_format($stationsReported) }}
+                    </span>
+                    <span class="text-gray-700 bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-300">
+                        Remaining: {{ number_format(max($totalStations - $stationsReported, 0)) }}
+                    </span>
                 </div>
             </div>
 
