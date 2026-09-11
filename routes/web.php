@@ -50,6 +50,9 @@ Route::prefix('manage')->name('manage.')->middleware(['auth.agent', 'admin'])->g
     Route::post('/stations', [ManageController::class, 'storeStation'])->name('stations.store');
     Route::delete('/stations/{station}', [ManageController::class, 'destroyStation'])->name('stations.destroy');
 
+    Route::post('/presiding-officers', [ManageController::class, 'storePresidingOfficer'])->name('presidingOfficers.store');
+    Route::delete('/presiding-officers/{presidingOfficer}', [ManageController::class, 'destroyPresidingOfficer'])->name('presidingOfficers.destroy');
+
     Route::post('/candidates', [ManageController::class, 'storeCandidate'])->name('candidates.store');
     Route::delete('/candidates/{candidate}', [ManageController::class, 'destroyCandidate'])->name('candidates.destroy');
 

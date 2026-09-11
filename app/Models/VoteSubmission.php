@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class VoteSubmission extends Model
 {
     protected $fillable = [
-        'polling_station_id', 'election_type_id', 'user_id',
+        'polling_station_id', 'election_type_id', 'user_id', 'presiding_officer_id',
         'agent_name', 'agent_code', 'presiding_officer',
         'spoilt_votes', 'total_votes_cast', 'registered_voters',
         'status', 'notes', 'ip_address', 'device_info',
@@ -40,6 +40,11 @@ class VoteSubmission extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function presidingOfficer(): BelongsTo
+    {
+        return $this->belongsTo(PresidingOfficer::class);
     }
 
     public function verifier(): BelongsTo

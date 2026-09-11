@@ -8,6 +8,7 @@ use App\Models\Constituency;
 use App\Models\County;
 use App\Models\ElectionType;
 use App\Models\PollingStation;
+use App\Models\PresidingOfficer;
 use App\Models\VoteDetail;
 use App\Models\VoteSubmission;
 use App\Models\Ward;
@@ -22,8 +23,9 @@ class VoteSubmissionController extends Controller
         $user = Auth::user();
         $electionTypes = ElectionType::where('is_active', true)->get();
         $stations = PollingStation::with('ward')->get();
+        $presidingOfficers = PresidingOfficer::where('is_active', true)->orderBy('name')->get();
 
-        return view('votes.create', compact('electionTypes', 'stations'));
+        return view('votes.create', compact('electionTypes', 'stations', 'presidingOfficers'));
     }
 
     public function store(Request $request)
@@ -31,6 +33,7 @@ class VoteSubmissionController extends Controller
         $request->validate([
             'election_type_id' => 'required|exists:election_types,id',
             'polling_station_id' => 'required|exists:polling_stations,id',
+            'presiding_officer_id' => 'required|exists:presiding_officers,id',
             'agent_name' => 'required|string|max:255',
             'agent_code' => 'required|string|max:50',
             'presiding_officer' => 'nullable|string|max:255',
@@ -54,13 +57,18 @@ class VoteSubmissionController extends Controller
         DB::beginTransaction();
 
         try {
+            $presidingOfficer = PresidingOfficer::whereKey($request->presiding_officer_id)
+                ->where('is_active', true)
+                ->firstOrFail();
+
             $submission = VoteSubmission::create([
                 'polling_station_id' => $request->polling_station_id,
                 'election_type_id' => $request->election_type_id,
                 'user_id' => Auth::id(),
+                'presiding_officer_id' => $presidingOfficer->id,
                 'agent_name' => $request->agent_name,
                 'agent_code' => $request->agent_code,
-                'presiding_officer' => $request->presiding_officer,
+                'presiding_officer' => $presidingOfficer->name,
                 'spoilt_votes' => $request->spoilt_votes,
                 'total_votes_cast' => $request->total_votes_cast,
                 'registered_voters' => $request->registered_voters,

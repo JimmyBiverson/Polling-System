@@ -8,6 +8,7 @@ use App\Models\Constituency;
 use App\Models\County;
 use App\Models\ElectionType;
 use App\Models\PollingStation;
+use App\Models\PresidingOfficer;
 use App\Models\User;
 use App\Models\VoteSubmission;
 use App\Models\Ward;
@@ -23,6 +24,7 @@ class ManageController extends Controller
         $constituencies = Constituency::with('county')->get();
         $wards = Ward::with('constituency')->get();
         $stations = PollingStation::with('ward')->get();
+        $presidingOfficers = PresidingOfficer::orderBy('name')->get();
         $candidates = Candidate::with('electionType')->get();
         $electionTypes = ElectionType::all();
         $users = User::with('assignedStation')->latest()->get();
@@ -30,7 +32,7 @@ class ManageController extends Controller
 
         return view('manage.index', compact(
             'counties', 'constituencies', 'wards', 'stations',
-            'candidates', 'electionTypes', 'users', 'auditLogs'
+            'candidates', 'electionTypes', 'users', 'auditLogs', 'presidingOfficers'
         ));
     }
 
@@ -297,6 +299,25 @@ class ManageController extends Controller
         $station->delete();
 
         return back()->with('success', 'Station deleted.');
+    }
+
+    public function storePresidingOfficer(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:presiding_officers,name',
+            'code' => 'nullable|string|max:50|unique:presiding_officers,code',
+        ]);
+
+        PresidingOfficer::create($request->only('name', 'code'));
+
+        return back()->with('success', 'Presiding officer added.');
+    }
+
+    public function destroyPresidingOfficer(PresidingOfficer $presidingOfficer)
+    {
+        $presidingOfficer->update(['is_active' => false]);
+
+        return back()->with('success', 'Presiding officer removed from the selection list.');
     }
 
     // ── Candidates ────────────────────────────────────────

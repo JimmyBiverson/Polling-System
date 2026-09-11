@@ -34,6 +34,7 @@
             'constituencies' => '🏛️ Constituencies',
             'wards' => '📍 Wards',
             'stations' => '🏫 Polling Stations',
+            'presiding_officers' => '🧑‍⚖️ Presiding Officers',
             'candidates' => '👔 Candidates',
             'election_types' => '🗳️ Election Types'
         ] as $key => $label)
@@ -362,6 +363,50 @@
             @if($stations->count() > 200)
             <p class="text-xs text-gray-400 mt-3">Showing 200 of {{ $stations->count() }} stations.</p>
             @endif
+        </div>
+    </div>
+
+    {{-- Presiding Officers --}}
+    <div x-show="tab === 'presiding_officers'" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h3 class="font-bold text-gray-900">Presiding Officers</h3>
+            <p class="text-xs text-gray-500 mt-1">Only active officers appear in the agent submission form.</p>
+        </div>
+        <div class="p-6">
+            <form method="POST" action="{{ route('manage.presidingOfficers.store') }}" class="grid grid-cols-1 sm:grid-cols-[1fr_220px_auto] gap-3 mb-6">
+                @csrf
+                <input type="text" name="name" placeholder="Full name" required class="px-4 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500">
+                <input type="text" name="code" placeholder="Officer code (optional)" class="px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500">
+                <button type="submit" class="bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-green-800 transition-colors">Add</button>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead><tr class="bg-gray-50"><th class="px-4 py-2 text-left font-semibold text-gray-600">Name</th><th class="px-4 py-2 text-left font-semibold text-gray-600">Code</th><th class="px-4 py-2 text-left font-semibold text-gray-600">Status</th><th class="px-4 py-2 text-right font-semibold text-gray-600">Action</th></tr></thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @forelse($presidingOfficers as $officer)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-2 font-medium text-gray-900">{{ $officer->name }}</td>
+                            <td class="px-4 py-2 text-gray-600">{{ $officer->code ?? 'N/A' }}</td>
+                            <td class="px-4 py-2">
+                                <span class="text-xs font-semibold {{ $officer->is_active ? 'text-green-700' : 'text-gray-500' }}">{{ $officer->is_active ? 'Active' : 'Removed' }}</span>
+                            </td>
+                            <td class="px-4 py-2 text-right">
+                                @if($officer->is_active)
+                                <form method="POST" action="{{ route('manage.presidingOfficers.destroy', $officer) }}" onsubmit="return confirm('Remove this presiding officer from the selection list?')">
+                                    @csrf @method('DELETE')
+                                    <button class="text-red-500 hover:text-red-700 text-xs font-medium">Remove</button>
+                                </form>
+                                @else
+                                <span class="text-xs text-gray-400">Unavailable</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr><td colspan="4" class="px-4 py-6 text-center text-gray-400">No presiding officers added.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

@@ -91,8 +91,18 @@
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Presiding Officer</label>
-                    <input type="text" name="presiding_officer" placeholder="Name of presiding officer"
-                           class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-gray-50 focus:bg-white">
+                    <select name="presiding_officer_id" required
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-gray-50 focus:bg-white">
+                        <option value="">— Select Presiding Officer —</option>
+                        @foreach($presidingOfficers as $officer)
+                        <option value="{{ $officer->id }}" @selected(old('presiding_officer_id') == $officer->id)>
+                            {{ $officer->name }}{{ $officer->code ? ' ('.$officer->code.')' : '' }}
+                        </option>
+                        @endforeach
+                    </select>
+                    @if($presidingOfficers->isEmpty())
+                    <p class="mt-1.5 text-xs text-amber-600">An administrator must add a presiding officer before you can submit a report.</p>
+                    @endif
                 </div>
             </div>
         </div>
