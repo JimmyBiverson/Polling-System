@@ -83,7 +83,8 @@ class SuperAdminTest extends TestCase
                 'name' => 'Jane Officer',
                 'code' => 'PO-001',
             ])
-            ->assertRedirect();
+            ->assertRedirect(route('manage.index', ['tab' => 'presiding_officers']))
+            ->assertSessionHas('success', 'Presiding officer added.');
 
         $officer = PresidingOfficer::firstOrFail();
 

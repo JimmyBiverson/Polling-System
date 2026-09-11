@@ -12,6 +12,7 @@ use App\Models\PresidingOfficer;
 use App\Models\User;
 use App\Models\VoteSubmission;
 use App\Models\Ward;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -77,7 +78,7 @@ class ManageController extends Controller
             'description' => "Created user {$user->name} ({$user->role})",
         ]);
 
-        return back()->with('success', "User {$user->name} created successfully.");
+        return $this->manageRedirect('users', "User {$user->name} created successfully.");
     }
 
     public function updateUser(Request $request, User $user)
@@ -109,7 +110,7 @@ class ManageController extends Controller
             'description' => "Updated user {$user->name} (Role: {$oldRole} -> {$user->role})",
         ]);
 
-        return back()->with('success', "User {$user->name} updated.");
+        return $this->manageRedirect('users', "User {$user->name} updated.");
     }
 
     public function toggleUserStatus(User $user)
@@ -129,7 +130,7 @@ class ManageController extends Controller
             'description' => "User {$user->name} was {$statusStr}.",
         ]);
 
-        return back()->with('success', "User account {$user->name} {$statusStr}.");
+        return $this->manageRedirect('users', "User account {$user->name} {$statusStr}.");
     }
 
     public function resetUserPassword(Request $request, User $user)
@@ -147,13 +148,13 @@ class ManageController extends Controller
             'description' => "Reset password for user {$user->name}",
         ]);
 
-        return back()->with('success', "Password reset for {$user->name}.");
+        return $this->manageRedirect('users', "Password reset for {$user->name}.");
     }
 
     public function destroyUser(User $user)
     {
         if ($user->id === Auth::id()) {
-            return back()->with('error', 'Cannot delete your own super admin account.');
+            return $this->manageRedirect('users', 'Cannot delete your own super admin account.', 'error');
         }
 
         $userName = $user->name;
@@ -168,7 +169,7 @@ class ManageController extends Controller
             'description' => "Deleted user {$userName}",
         ]);
 
-        return back()->with('success', "User {$userName} deleted.");
+        return $this->manageRedirect('users', "User {$userName} deleted.");
     }
 
     // ── Super Admin Audit Logs View ─────────────────────────
@@ -207,7 +208,7 @@ class ManageController extends Controller
             'description' => "Re-calculated hashes and vote tallies for {$recalculated} submissions.",
         ]);
 
-        return back()->with('success', "System re-tally complete. Recalculated {$recalculated} submission cryptographic hashes.");
+        return $this->manageRedirect('users', "System re-tally complete. Recalculated {$recalculated} submission cryptographic hashes.");
     }
 
     public function clearTestData()
@@ -220,7 +221,7 @@ class ManageController extends Controller
             'description' => 'Super admin triggered audit verification sweep.',
         ]);
 
-        return back()->with('success', 'Data integrity audit completed and logs purged.');
+        return $this->manageRedirect('audit_logs', 'Data integrity audit completed and logs purged.');
     }
 
     // ── Counties ──────────────────────────────────────────
@@ -230,14 +231,14 @@ class ManageController extends Controller
         $request->validate(['name' => 'required|string|max:255|unique:counties,name']);
         County::create($request->only('name', 'code'));
 
-        return back()->with('success', 'County created.');
+        return $this->manageRedirect('constituencies', 'County created.');
     }
 
     public function destroyCounty(County $county)
     {
         $county->delete();
 
-        return back()->with('success', 'County deleted.');
+        return $this->manageRedirect('constituencies', 'County deleted.');
     }
 
     // ── Constituencies ────────────────────────────────────
@@ -250,14 +251,14 @@ class ManageController extends Controller
         ]);
         Constituency::create($request->only('name', 'code', 'county_id'));
 
-        return back()->with('success', 'Constituency created.');
+        return $this->manageRedirect('constituencies', 'Constituency created.');
     }
 
     public function destroyConstituency(Constituency $constituency)
     {
         $constituency->delete();
 
-        return back()->with('success', 'Constituency deleted.');
+        return $this->manageRedirect('constituencies', 'Constituency deleted.');
     }
 
     // ── Wards ─────────────────────────────────────────────
@@ -270,14 +271,14 @@ class ManageController extends Controller
         ]);
         Ward::create($request->only('name', 'code', 'constituency_id'));
 
-        return back()->with('success', 'Ward created.');
+        return $this->manageRedirect('wards', 'Ward created.');
     }
 
     public function destroyWard(Ward $ward)
     {
         $ward->delete();
 
-        return back()->with('success', 'Ward deleted.');
+        return $this->manageRedirect('wards', 'Ward deleted.');
     }
 
     // ── Polling Stations ──────────────────────────────────
@@ -291,14 +292,14 @@ class ManageController extends Controller
         ]);
         PollingStation::create($request->only('name', 'code', 'ward_id', 'presiding_officer', 'registered_voters'));
 
-        return back()->with('success', 'Polling station created.');
+        return $this->manageRedirect('stations', 'Polling station created.');
     }
 
     public function destroyStation(PollingStation $station)
     {
         $station->delete();
 
-        return back()->with('success', 'Station deleted.');
+        return $this->manageRedirect('stations', 'Station deleted.');
     }
 
     public function storePresidingOfficer(Request $request)
@@ -310,14 +311,14 @@ class ManageController extends Controller
 
         PresidingOfficer::create($request->only('name', 'code'));
 
-        return back()->with('success', 'Presiding officer added.');
+        return $this->manageRedirect('presiding_officers', 'Presiding officer added.');
     }
 
     public function destroyPresidingOfficer(PresidingOfficer $presidingOfficer)
     {
         $presidingOfficer->update(['is_active' => false]);
 
-        return back()->with('success', 'Presiding officer removed from the selection list.');
+        return $this->manageRedirect('presiding_officers', 'Presiding officer removed from the selection list.');
     }
 
     // ── Candidates ────────────────────────────────────────
@@ -330,14 +331,14 @@ class ManageController extends Controller
         ]);
         Candidate::create($request->only('name', 'party', 'election_type_id'));
 
-        return back()->with('success', 'Candidate added.');
+        return $this->manageRedirect('candidates', 'Candidate added.');
     }
 
     public function destroyCandidate(Candidate $candidate)
     {
         $candidate->delete();
 
-        return back()->with('success', 'Candidate deleted.');
+        return $this->manageRedirect('candidates', 'Candidate deleted.');
     }
 
     // ── Election Types ────────────────────────────────────
@@ -347,13 +348,18 @@ class ManageController extends Controller
         $request->validate(['name' => 'required|string|max:255']);
         ElectionType::create($request->only('name'));
 
-        return back()->with('success', 'Election type created.');
+        return $this->manageRedirect('election_types', 'Election type created.');
     }
 
     public function destroyElectionType(ElectionType $electionType)
     {
         $electionType->delete();
 
-        return back()->with('success', 'Election type deleted.');
+        return $this->manageRedirect('election_types', 'Election type deleted.');
+    }
+
+    private function manageRedirect(string $tab, string $message, string $level = 'success'): RedirectResponse
+    {
+        return redirect()->route('manage.index', ['tab' => $tab])->with($level, $message);
     }
 }

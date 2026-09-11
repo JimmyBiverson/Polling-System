@@ -2,7 +2,7 @@
 @section('title', 'Manage System')
 
 @section('content')
-<div class="space-y-6" x-data="{ tab: 'users' }">
+<div class="space-y-6" x-data="{ tab: @js(request('tab', 'users')) }">
 
     <div class="bg-gradient-to-r from-gray-950 via-emerald-950 to-gray-950 text-white rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-amber-500/40 relative overflow-hidden">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
