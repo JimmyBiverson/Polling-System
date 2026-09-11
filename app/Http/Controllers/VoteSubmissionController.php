@@ -145,7 +145,7 @@ class VoteSubmissionController extends Controller
 
     public function overrideStatus(Request $request, VoteSubmission $submission)
     {
-        if (! Auth::user()->isAdmin()) {
+        if (! Auth::user()->isSuperAdmin()) {
             abort(403, 'Super Admin override privileges required.');
         }
 

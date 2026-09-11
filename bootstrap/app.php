@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AdminOnly;
 use App\Http\Middleware\AuthAgent;
+use App\Http\Middleware\SuperAdminOnly;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => AdminOnly::class,
             'auth.agent' => AuthAgent::class,
+            'super_admin' => SuperAdminOnly::class,
         ]);
 
         $middleware->redirectGuestsTo(fn () => route('login'));

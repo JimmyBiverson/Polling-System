@@ -60,22 +60,22 @@ Route::prefix('manage')->name('manage.')->middleware(['auth.agent', 'admin'])->g
     Route::delete('/election-types/{electionType}', [ManageController::class, 'destroyElectionType'])->name('electionTypes.destroy');
 
     // ── Super Admin User & Role Management ─────────────────
-    Route::get('/users', [ManageController::class, 'users'])->name('users.index');
-    Route::post('/users', [ManageController::class, 'storeUser'])->name('users.store');
-    Route::put('/users/{user}', [ManageController::class, 'updateUser'])->name('users.update');
-    Route::post('/users/{user}/toggle-status', [ManageController::class, 'toggleUserStatus'])->name('users.toggleStatus');
-    Route::post('/users/{user}/reset-password', [ManageController::class, 'resetUserPassword'])->name('users.resetPassword');
-    Route::delete('/users/{user}', [ManageController::class, 'destroyUser'])->name('users.destroy');
+    Route::get('/users', [ManageController::class, 'users'])->name('users.index')->middleware('super_admin');
+    Route::post('/users', [ManageController::class, 'storeUser'])->name('users.store')->middleware('super_admin');
+    Route::put('/users/{user}', [ManageController::class, 'updateUser'])->name('users.update')->middleware('super_admin');
+    Route::post('/users/{user}/toggle-status', [ManageController::class, 'toggleUserStatus'])->name('users.toggleStatus')->middleware('super_admin');
+    Route::post('/users/{user}/reset-password', [ManageController::class, 'resetUserPassword'])->name('users.resetPassword')->middleware('super_admin');
+    Route::delete('/users/{user}', [ManageController::class, 'destroyUser'])->name('users.destroy')->middleware('super_admin');
 
     // ── Super Admin Security Audit Logs ─────────────────────
-    Route::get('/audit-logs', [ManageController::class, 'auditLogs'])->name('auditLogs');
+    Route::get('/audit-logs', [ManageController::class, 'auditLogs'])->name('auditLogs')->middleware('super_admin');
 
     // ── Super Admin System Data & Reset Controls ───────────
-    Route::post('/re-tally', [ManageController::class, 'reTally'])->name('reTally');
-    Route::post('/clear-test-data', [ManageController::class, 'clearTestData'])->name('clearTestData');
+    Route::post('/re-tally', [ManageController::class, 'reTally'])->name('reTally')->middleware('super_admin');
+    Route::post('/clear-test-data', [ManageController::class, 'clearTestData'])->name('clearTestData')->middleware('super_admin');
 });
 
 // ── Super Admin Submission Overrides ───────────────────────
 Route::post('/submission/{submission}/override', [VoteSubmissionController::class, 'overrideStatus'])
-    ->middleware(['auth.agent', 'admin'])
+    ->middleware(['auth.agent', 'super_admin'])
     ->name('votes.override');

@@ -96,6 +96,163 @@
         </div>
     </div>
 
+    {{-- Submission Review Desk --}}
+    <section class="bg-gray-950 rounded-3xl border border-gray-800 p-5 sm:p-6 shadow-2xl text-white">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-6">
+            <div>
+                <div class="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-amber-300 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    Review desk
+                </div>
+                <h2 class="text-xl sm:text-2xl font-black">Every result. Every category. One tally.</h2>
+                <p class="text-sm text-gray-300 mt-1 max-w-2xl">Inspect presidential, governor, MP, Women Rep, MCA, or any future election type. County admins can verify; Super Admins can override and govern.</p>
+                <div class="flex flex-wrap gap-2 mt-3 text-[11px] font-bold">
+                    <span class="rounded-lg bg-gray-900 px-2.5 py-1.5 text-gray-300">Agents: <strong class="text-amber-300">{{ number_format($pendingBySource['agent'] ?? 0) }}</strong> pending</span>
+                    <span class="rounded-lg bg-gray-900 px-2.5 py-1.5 text-gray-300">County admins: <strong class="text-blue-300">{{ number_format($pendingBySource['county_admin'] ?? 0) }}</strong> pending</span>
+                </div>
+            </div>
+            <span class="inline-flex items-center gap-2 text-xs font-bold bg-amber-400 text-gray-950 px-3 py-2 rounded-xl whitespace-nowrap">
+                {{ number_format($pendingSubmissions) }} awaiting review
+            </span>
+        </div>
+
+        <form method="GET" action="{{ route('dashboard') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Election category</label>
+                <select name="election_type_id" class="w-full rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-white focus:border-emerald-400 focus:ring-emerald-400">
+                    <option value="">All categories</option>
+                    @foreach($electionTypes as $type)
+                    <option value="{{ $type->id }}" @selected($selectedElectionType === $type->id)>{{ $type->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Review status</label>
+                <select name="status" class="w-full rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-white focus:border-emerald-400 focus:ring-emerald-400">
+                    @foreach(['all' => 'All statuses', 'pending' => 'Pending review', 'verified' => 'Verified', 'rejected' => 'Rejected', 'disputed' => 'Disputed'] as $value => $label)
+                    <option value="{{ $value }}" @selected($selectedStatus === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Submitted by</label>
+                <select name="source" class="w-full rounded-xl border border-gray-700 bg-gray-900 px-3 py-2.5 text-sm text-white focus:border-emerald-400 focus:ring-emerald-400">
+                    @foreach(['all' => 'All users', 'agent' => 'Polling agents', 'county_admin' => 'County admins', 'super_admin' => 'Super admins'] as $value => $label)
+                    <option value="{{ $value }}" @selected($selectedSource === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex items-end gap-2">
+                <button type="submit" class="flex-1 rounded-xl bg-emerald-400 px-4 py-2.5 text-sm font-black text-gray-950 hover:bg-emerald-300 transition-colors">Apply filters</button>
+                <a href="{{ route('dashboard') }}" class="rounded-xl border border-gray-700 px-4 py-2.5 text-sm font-bold text-gray-300 hover:bg-gray-800 transition-colors">Reset</a>
+            </div>
+        </form>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 mb-6">
+            @foreach($electionTypes as $type)
+            <a href="{{ route('dashboard', ['election_type_id' => $type->id, 'status' => 'pending']) }}" class="rounded-2xl border {{ $selectedElectionType === $type->id ? 'border-emerald-400 bg-emerald-400/15' : 'border-gray-800 bg-gray-900' }} p-3 hover:border-emerald-400 transition-colors">
+                <p class="text-xs font-bold text-gray-300 truncate">{{ $type->name }}</p>
+                <p class="text-2xl font-black text-white mt-1">{{ number_format($pendingByElection[$type->id] ?? 0) }}</p>
+                <p class="text-[11px] text-amber-300 font-bold">pending results</p>
+            </a>
+            @endforeach
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+            <div class="xl:col-span-2 overflow-hidden rounded-2xl border border-gray-800">
+                <div class="flex items-center justify-between gap-3 border-b border-gray-800 bg-gray-900 px-4 py-3">
+                    <div>
+                        <h3 class="font-black text-white">Submission queue</h3>
+                        <p class="text-xs text-gray-400">{{ $reviewSubmissions->count() }} result(s) shown, newest first</p>
+                    </div>
+                    @if(auth()->user()->isSuperAdmin())
+                    <span class="text-[11px] font-bold text-amber-300">Super Admin controls enabled</span>
+                    @else
+                    <span class="text-[11px] font-bold text-blue-300">Verification access</span>
+                    @endif
+                </div>
+                <div class="divide-y divide-gray-800 max-h-[34rem] overflow-y-auto">
+                    @forelse($reviewSubmissions as $sub)
+                    @php
+                        $sourceLabels = ['agent' => 'Polling agent', 'county_admin' => 'County admin', 'super_admin' => 'Super admin'];
+                        $sourceLabel = $sourceLabels[$sub->user?->role] ?? ucfirst($sub->user?->role ?? 'Unknown user');
+                        $queueStatus = [
+                            'pending' => 'bg-amber-400 text-gray-950',
+                            'verified' => 'bg-emerald-400 text-gray-950',
+                            'rejected' => 'bg-red-400 text-gray-950',
+                            'disputed' => 'bg-purple-400 text-gray-950',
+                        ][$sub->status] ?? 'bg-gray-500 text-white';
+                    @endphp
+                    <div class="p-4 hover:bg-gray-900/80 transition-colors">
+                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="rounded-lg px-2 py-1 text-[11px] font-black {{ $queueStatus }}">{{ strtoupper($sub->status) }}</span>
+                                    <span class="text-xs font-bold text-emerald-300">{{ $sub->electionType?->name ?? 'Unknown category' }}</span>
+                                    <span class="text-[11px] text-gray-500">#{{ $sub->id }}</span>
+                                </div>
+                                <p class="font-bold text-white mt-2 truncate">{{ $sub->pollingStation?->name ?? 'Unknown station' }}</p>
+                                <p class="text-xs text-gray-400">{{ $sub->pollingStation?->ward?->name ?? 'Unknown ward' }} · {{ $sourceLabel }}: {{ $sub->user?->name ?? $sub->agent_name }}</p>
+                                @if($sub->details->isNotEmpty())
+                                <div class="flex flex-wrap gap-1.5 mt-3">
+                                    @foreach($sub->details->take(4) as $detail)
+                                    <span class="rounded-lg bg-gray-800 px-2 py-1 text-[11px] text-gray-300"><strong class="text-white">{{ $detail->candidate?->name ?? 'Unknown' }}:</strong> {{ number_format($detail->votes) }}</span>
+                                    @endforeach
+                                    @if($sub->details->count() > 4)
+                                    <span class="rounded-lg bg-gray-800 px-2 py-1 text-[11px] text-gray-500">+{{ $sub->details->count() - 4 }} more</span>
+                                    @endif
+                                </div>
+                                @endif
+                            </div>
+                            <div class="flex items-center gap-3 sm:text-right shrink-0">
+                                <div>
+                                    <p class="text-lg font-black text-white">{{ number_format($sub->total_votes_cast) }}</p>
+                                    <p class="text-[11px] text-gray-500 uppercase">votes cast</p>
+                                </div>
+                                <a href="{{ route('votes.show', $sub) }}" class="rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs font-black text-emerald-300 hover:bg-emerald-500/20">Review</a>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="px-4 py-10 text-center text-sm text-gray-400">No submissions match these filters.</div>
+                    @endforelse
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-gray-800 bg-gray-900 p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="font-black text-white">Verified category tally</h3>
+                        <p class="text-xs text-gray-400">Candidate totals from verified results</p>
+                    </div>
+                    <span class="text-xs font-black text-emerald-300">Live</span>
+                </div>
+                <div class="space-y-4 max-h-[30rem] overflow-y-auto">
+                    @forelse($electionTypes as $type)
+                    @php $tallies = $categoryTallies[$type->id] ?? collect(); $categoryTotal = $tallies->sum('votes'); @endphp
+                    <div class="border-b border-gray-800 pb-3 last:border-0">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <p class="text-sm font-black text-white">{{ $type->name }}</p>
+                            <span class="text-[11px] text-gray-400">{{ number_format($categoryTotal) }} votes</span>
+                        </div>
+                        @forelse($tallies->take(4) as $tally)
+                        @php $share = $categoryTotal > 0 ? round(($tally['votes'] / $categoryTotal) * 100) : 0; @endphp
+                        <div class="mb-2">
+                            <div class="flex justify-between gap-2 text-[11px] mb-1"><span class="text-gray-300 truncate">{{ $tally['name'] }}</span><span class="font-bold text-emerald-300">{{ number_format($tally['votes']) }} · {{ $share }}%</span></div>
+                            <div class="h-1.5 rounded-full bg-gray-800"><div class="h-1.5 rounded-full bg-emerald-400" style="width: {{ $share }}%"></div></div>
+                        </div>
+                        @empty
+                        <p class="text-xs text-gray-500">No verified votes yet.</p>
+                        @endforelse
+                    </div>
+                    @empty
+                    <p class="text-sm text-gray-400">No election categories configured.</p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    </section>
+
     {{-- Interactive Graphical Analytics Section: Explicit Graph (Left) & Pie Chart (Right) Layout --}}
     <div class="space-y-6">
         <div class="flex items-center justify-between border-b border-gray-200 pb-3">
@@ -304,8 +461,8 @@
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
             <div>
-                <h2 class="text-lg font-bold text-gray-900">Form 34A Recent Station Transmissions</h2>
-                <p class="text-xs text-gray-500">Live incoming polling station reports & verification status</p>
+                <h2 class="text-lg font-bold text-gray-900">Filtered Station Transmissions</h2>
+                <p class="text-xs text-gray-500">Incoming reports matching the review desk filters</p>
             </div>
             <a href="{{ route('reports.index') }}" class="text-xs font-bold text-green-700 hover:text-green-800 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200">View All Reports →</a>
         </div>
@@ -324,7 +481,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @forelse($recentSubmissions as $sub)
+                    @forelse($reviewSubmissions as $sub)
                     <tr class="hover:bg-gray-50/80 transition-colors">
                         <td class="px-6 py-3.5">
                             <p class="font-bold text-gray-900">{{ $sub->pollingStation->name ?? 'N/A' }}</p>

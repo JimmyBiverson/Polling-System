@@ -2,19 +2,20 @@
 @section('title', 'Manage System')
 
 @section('content')
-<div class="space-y-6" x-data="{ tab: @js(request('tab', 'users')) }">
+<div class="space-y-6" x-data="{ tab: @js(auth()->user()->isSuperAdmin() ? request('tab', 'users') : (in_array(request('tab'), ['constituencies', 'wards', 'stations', 'presiding_officers', 'candidates', 'election_types'], true) ? request('tab') : 'stations')) }">
 
     <div class="bg-gradient-to-r from-gray-950 via-emerald-950 to-gray-950 text-white rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-amber-500/40 relative overflow-hidden">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
             <div>
                 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-400 text-gray-950 text-xs font-black shadow-md mb-3">
                     <svg class="w-4 h-4 text-gray-950" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    <span class="uppercase tracking-wide">Super Admin Governance & Operations</span>
+                    <span class="uppercase tracking-wide">{{ auth()->user()->isSuperAdmin() ? 'Super Admin Governance & Operations' : 'County Operations & Review' }}</span>
                 </div>
                 <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">System Data & User Security Hub</h1>
                 <p class="text-amber-300 text-sm sm:text-base font-bold mt-1.5">Manage field agents, administrative credentials, audit trails, and electoral boundaries.</p>
             </div>
             <div class="flex items-center gap-2">
+                @if(auth()->user()->isSuperAdmin())
                 <form method="POST" action="{{ route('manage.reTally') }}" onsubmit="return confirm('Execute system-wide cryptographic hash re-tallying?')">
                     @csrf
                     <button type="submit" class="bg-amber-400 hover:bg-amber-300 text-gray-950 font-black text-xs sm:text-sm py-3 px-5 rounded-2xl shadow-xl border border-amber-300 transition-all flex items-center gap-2">
@@ -22,6 +23,7 @@
                         <span>System Re-Tally</span>
                     </button>
                 </form>
+                @endif
             </div>
         </div>
     </div>
@@ -38,11 +40,13 @@
             'candidates' => '👔 Candidates',
             'election_types' => '🗳️ Election Types'
         ] as $key => $label)
+        @if(! in_array($key, ['users', 'audit_logs'], true) || auth()->user()->isSuperAdmin())
         <button @click="tab = '{{ $key }}'"
                 class="px-4 py-3 text-sm font-extrabold rounded-t-2xl transition-all whitespace-nowrap border-t border-x border-transparent"
                 :class="tab === '{{ $key }}' ? 'bg-emerald-800 text-white shadow-md border-emerald-900' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-950'">
             {{ $label }}
         </button>
+        @endif
         @endforeach
     </div>
 
@@ -52,6 +56,7 @@
     </div>
     @endif
 
+    @if(auth()->user()->isSuperAdmin())
     {{-- 1. Users & Access Control --}}
     <div x-show="tab === 'users'" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden space-y-6 p-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
@@ -192,8 +197,10 @@
             </table>
         </div>
     </div>
+    @endif
 
     {{-- 2. Security & Audit Logs --}}
+    @if(auth()->user()->isSuperAdmin())
     <div x-show="tab === 'audit_logs'" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden p-6 space-y-4">
         <div class="flex items-center justify-between border-b border-gray-100 pb-4">
             <div>
@@ -239,6 +246,7 @@
             </table>
         </div>
     </div>
+    @endif
 
     {{-- Constituencies --}}
     <div x-show="tab === 'constituencies'" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">

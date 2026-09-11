@@ -90,9 +90,15 @@
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6" x-data="{ notesText: '', statusVal: '{{ $submission->status }}' }">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
             <h3 class="text-lg font-bold text-gray-900">Admin Form 34A Governance & Status Controls</h3>
+            @if(auth()->user()->isSuperAdmin())
             <span class="inline-flex items-center gap-1 text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full border border-amber-300">
                 👑 Super Admin Override Privileges
             </span>
+            @else
+            <span class="inline-flex items-center gap-1 text-xs font-bold bg-blue-100 text-blue-800 px-3 py-1 rounded-full border border-blue-300">
+                County Admin Review Access
+            </span>
+            @endif
         </div>
 
         @if($submission->status === 'pending')
@@ -122,6 +128,7 @@
         </div>
         @endif
 
+        @if(auth()->user()->isSuperAdmin())
         {{-- Super Admin Override Form --}}
         <form method="POST" action="{{ route('votes.override', $submission) }}" class="space-y-4 bg-amber-50/50 p-4 rounded-xl border border-amber-200/60">
             @csrf
@@ -148,6 +155,7 @@
                 </button>
             </div>
         </form>
+        @endif
     </div>
     @endif
 

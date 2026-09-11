@@ -8,23 +8,37 @@ use App\Models\ElectionType;
 use App\Models\PollingStation;
 use App\Models\VoteDetail;
 use App\Models\VoteSubmission;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
         if ($user->isAdmin()) {
-            return $this->adminDashboard();
+            return $this->adminDashboard($request);
         }
 
         return $this->agentDashboard();
     }
 
-    private function adminDashboard()
+    private function adminDashboard(Request $request)
     {
+        $electionTypes = ElectionType::where('is_active', true)->orderBy('name')->get();
+        $selectedElectionType = $request->integer('election_type_id') ?: null;
+        $selectedStatus = $request->string('status')->value() ?: 'all';
+        $selectedSource = $request->string('source')->value() ?: 'all';
+
+        if (! in_array($selectedStatus, ['all', 'pending', 'verified', 'rejected', 'disputed'], true)) {
+            $selectedStatus = 'all';
+        }
+
+        if (! in_array($selectedSource, ['all', 'agent', 'county_admin', 'super_admin'], true)) {
+            $selectedSource = 'all';
+        }
+
         $totalSubmissions = VoteSubmission::count();
         $verifiedSubmissions = VoteSubmission::where('status', 'verified')->count();
         $pendingSubmissions = VoteSubmission::where('status', 'pending')->count();
@@ -115,12 +129,60 @@ class DashboardController extends Controller
 
         $constituencies = Constituency::with('wards.pollingStations.latestSubmission')->get();
 
-        $electionTypes = ElectionType::where('is_active', true)->get();
+        $reviewQuery = VoteSubmission::with([
+            'pollingStation.ward.constituency',
+            'user',
+            'electionType',
+            'details.candidate',
+        ])->latest('submitted_at');
 
-        $recentSubmissions = VoteSubmission::with(['pollingStation.ward.constituency', 'user', 'electionType'])
-            ->latest('submitted_at')
-            ->limit(25)
+        if ($selectedElectionType) {
+            $reviewQuery->where('election_type_id', $selectedElectionType);
+        }
+
+        if ($selectedStatus !== 'all') {
+            $reviewQuery->where('status', $selectedStatus);
+        }
+
+        if ($selectedSource !== 'all') {
+            $reviewQuery->whereHas('user', fn ($query) => $query->where('role', $selectedSource));
+        }
+
+        $reviewSubmissions = $reviewQuery->limit(50)->get();
+
+        $pendingByElection = VoteSubmission::selectRaw('election_type_id, COUNT(*) as total')
+            ->where('status', 'pending')
+            ->groupBy('election_type_id')
+            ->pluck('total', 'election_type_id');
+
+        $pendingBySource = VoteSubmission::join('users', 'users.id', '=', 'vote_submissions.user_id')
+            ->selectRaw('users.role, COUNT(*) as total')
+            ->where('vote_submissions.status', 'pending')
+            ->groupBy('users.role')
+            ->pluck('total', 'users.role');
+
+        $verifiedDetails = VoteDetail::with('candidate.electionType')
+            ->whereHas('submission', fn ($query) => $query->where('status', 'verified'))
             ->get();
+
+        $categoryTallies = $electionTypes->mapWithKeys(function (ElectionType $type) use ($verifiedDetails) {
+            $candidateTallies = $verifiedDetails
+                ->filter(fn (VoteDetail $detail) => $detail->candidate?->election_type_id === $type->id)
+                ->groupBy('candidate_id')
+                ->map(function ($details) {
+                    $candidate = $details->first()->candidate;
+
+                    return [
+                        'name' => $candidate?->name ?? 'Unknown',
+                        'party' => $candidate?->party ?? 'Independent',
+                        'votes' => $details->sum('votes'),
+                    ];
+                })
+                ->sortByDesc('votes')
+                ->values();
+
+            return [$type->id => $candidateTallies];
+        });
 
         $candidates = Candidate::with('electionType')->get();
 
@@ -128,7 +190,9 @@ class DashboardController extends Controller
             'totalSubmissions', 'verifiedSubmissions', 'pendingSubmissions',
             'totalStations', 'stationsReported', 'totalVotes', 'totalSpoilt',
             'totalRegistered', 'turnout', 'latestSubmission', 'constituencies',
-            'electionTypes', 'recentSubmissions', 'candidates',
+            'electionTypes', 'reviewSubmissions', 'candidates',
+            'selectedElectionType', 'selectedStatus', 'selectedSource',
+            'pendingByElection', 'pendingBySource', 'categoryTallies',
             'governorCandidatesData', 'demographics', 'constituencySummary'
         ));
     }
