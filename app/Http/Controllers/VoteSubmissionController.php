@@ -38,7 +38,7 @@ class VoteSubmissionController extends Controller
             'agent_code' => 'required|string|max:50',
             'presiding_officer' => 'nullable|string|max:255',
             'candidate_votes' => 'required|array|min:1',
-            'candidate_votes.*.candidate_id' => 'required|exists:candidates,id',
+            'candidate_votes.*.candidate_id' => 'required|distinct|exists:candidates,id',
             'candidate_votes.*.votes' => 'required|integer|min:0',
             'spoilt_votes' => 'required|integer|min:0',
             'total_votes_cast' => 'required|integer|min:0',
@@ -48,9 +48,26 @@ class VoteSubmissionController extends Controller
         $candidateSum = collect($request->candidate_votes)->sum('votes');
         $expectedTotal = $candidateSum + $request->spoilt_votes;
 
+        $candidateIds = collect($request->candidate_votes)->pluck('candidate_id')->unique();
+        $validCandidateCount = Candidate::where('election_type_id', $request->election_type_id)
+            ->whereIn('id', $candidateIds)
+            ->count();
+
+        if ($validCandidateCount !== $candidateIds->count()) {
+            return back()->withErrors([
+                'candidate_votes' => 'Every candidate must belong to the selected election category.',
+            ])->withInput();
+        }
+
         if ($expectedTotal !== (int) $request->total_votes_cast) {
             return back()->withErrors([
                 'total_votes_cast' => "Vote mismatch: candidates ({$candidateSum}) + spoilt ({$request->spoilt_votes}) = {$expectedTotal}, but total cast is {$request->total_votes_cast}.",
+            ])->withInput();
+        }
+
+        if ((int) $request->total_votes_cast > (int) $request->registered_voters) {
+            return back()->withErrors([
+                'total_votes_cast' => 'Total votes cast cannot exceed the number of registered voters.',
             ])->withInput();
         }
 

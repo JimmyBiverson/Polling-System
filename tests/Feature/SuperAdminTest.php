@@ -145,4 +145,51 @@ class SuperAdminTest extends TestCase
             'is_active' => false,
         ]);
     }
+
+    public function test_submission_rejects_cross_category_candidates_and_impossible_turnout(): void
+    {
+        $agent = User::factory()->create(['role' => 'agent', 'is_active' => true]);
+        $county = County::create(['name' => 'Kakamega', 'code' => '037']);
+        $constituency = Constituency::create(['county_id' => $county->id, 'name' => 'Lurambi']);
+        $ward = Ward::create(['constituency_id' => $constituency->id, 'name' => 'Sheywe']);
+        $station = PollingStation::create(['ward_id' => $ward->id, 'name' => 'Integrity Station', 'registered_voters' => 100]);
+        $officer = PresidingOfficer::create(['name' => 'Integrity Officer']);
+        $presidential = ElectionType::create(['name' => 'Presidential']);
+        $governor = ElectionType::create(['name' => 'Governor']);
+        $governorCandidate = Candidate::create([
+            'election_type_id' => $governor->id,
+            'name' => 'Wrong Category Candidate',
+        ]);
+
+        $basePayload = [
+            'election_type_id' => $presidential->id,
+            'polling_station_id' => $station->id,
+            'presiding_officer_id' => $officer->id,
+            'agent_name' => $agent->name,
+            'agent_code' => 'AGENT-INT',
+            'spoilt_votes' => 0,
+            'registered_voters' => 100,
+        ];
+
+        $this->actingAs($agent)
+            ->post(route('votes.store'), $basePayload + [
+                'candidate_votes' => [
+                    ['candidate_id' => $governorCandidate->id, 'votes' => 10],
+                ],
+                'total_votes_cast' => 10,
+            ])
+            ->assertSessionHasErrors('candidate_votes');
+
+        $this->actingAs($agent)
+            ->post(route('votes.store'), array_merge($basePayload, [
+                'candidate_votes' => [
+                    ['candidate_id' => $governorCandidate->id, 'votes' => 150],
+                ],
+                'total_votes_cast' => 150,
+                'election_type_id' => $governor->id,
+            ]))
+            ->assertSessionHasErrors('total_votes_cast');
+
+        $this->assertDatabaseCount('vote_submissions', 0);
+    }
 }
