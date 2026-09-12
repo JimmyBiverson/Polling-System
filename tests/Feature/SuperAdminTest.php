@@ -8,10 +8,13 @@ use App\Models\County;
 use App\Models\ElectionType;
 use App\Models\PollingStation;
 use App\Models\PresidingOfficer;
+use App\Models\SystemSetting;
 use App\Models\User;
 use App\Models\VoteSubmission;
 use App\Models\Ward;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class SuperAdminTest extends TestCase
@@ -191,5 +194,48 @@ class SuperAdminTest extends TestCase
             ->assertSessionHasErrors('total_votes_cast');
 
         $this->assertDatabaseCount('vote_submissions', 0);
+    }
+
+    public function test_super_admin_can_update_system_branding_and_non_admins_cannot(): void
+    {
+        Storage::fake('public');
+        $superAdmin = User::factory()->create(['role' => 'super_admin', 'is_active' => true]);
+        $agent = User::factory()->create(['role' => 'agent', 'is_active' => true]);
+
+        $this->actingAs($superAdmin)
+            ->post(route('manage.branding.update'), [
+                'system_name' => 'Kakamega Results Command',
+                'system_tagline' => 'Verified county results, clearly managed',
+                'system_logo' => UploadedFile::fake()->image('command-logo.png', 120, 120),
+            ])
+            ->assertRedirect(route('manage.index', ['tab' => 'branding']))
+            ->assertSessionHas('success', 'System branding updated successfully.');
+
+        $logoPath = SystemSetting::valueFor('system_logo');
+        $this->assertSame('Kakamega Results Command', SystemSetting::valueFor('system_name'));
+        $this->assertSame('Verified county results, clearly managed', SystemSetting::valueFor('system_tagline'));
+        Storage::disk('public')->assertExists($logoPath);
+
+        $this->actingAs($superAdmin)
+            ->get(route('dashboard'))
+            ->assertSee('Kakamega Results Command')
+            ->assertSee('Verified county results, clearly managed');
+
+        $this->actingAs($superAdmin)
+            ->post(route('logout'))
+            ->assertRedirect(route('login'));
+
+        $this->get(route('login'))
+            ->assertSee('Kakamega Results Command')
+            ->assertSee('Verified county results, clearly managed');
+
+        $this->actingAs($agent)
+            ->post(route('manage.branding.update'), [
+                'system_name' => 'Unauthorized Branding',
+                'system_tagline' => 'Should not save',
+            ])
+            ->assertForbidden();
+
+        $this->assertSame('Kakamega Results Command', SystemSetting::valueFor('system_name'));
     }
 }

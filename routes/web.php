@@ -37,6 +37,7 @@ Route::get('/reports/export-csv', [ReportController::class, 'exportCsv'])
 // ── Admin: Manage ─────────────────────────────────────────
 Route::prefix('manage')->name('manage.')->middleware(['auth.agent', 'admin'])->group(function () {
     Route::get('/', [ManageController::class, 'index'])->name('index');
+    Route::post('/branding', [ManageController::class, 'updateBranding'])->name('branding.update')->middleware('super_admin');
 
     Route::post('/counties', [ManageController::class, 'storeCounty'])->name('counties.store');
     Route::delete('/counties/{county}', [ManageController::class, 'destroyCounty'])->name('counties.destroy');

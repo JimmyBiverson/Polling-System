@@ -32,6 +32,7 @@
     <div class="flex gap-2 overflow-x-auto border-b border-gray-200 pb-px scrollbar-hide">
         @foreach([
             'users' => '👥 User & Access Control',
+            'branding' => '🎨 System Branding',
             'audit_logs' => '🛡️ Security Audit Logs',
             'constituencies' => '🏛️ Constituencies',
             'wards' => '📍 Wards',
@@ -57,6 +58,45 @@
     @endif
 
     @if(auth()->user()->isSuperAdmin())
+    {{-- System Branding --}}
+    <div x-show="tab === 'branding'" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden p-6">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 border-b border-gray-100 pb-5 mb-5">
+            <div>
+                <h3 class="text-lg font-bold text-gray-900">System Branding</h3>
+                <p class="text-xs text-gray-500 mt-1">Change the name, tagline, and logo shown across the login and application screens.</p>
+            </div>
+            <div class="flex items-center gap-3 bg-gray-950 rounded-2xl px-4 py-3 text-white min-w-0">
+                @if($systemBranding['logo'])
+                <img src="{{ asset('storage/'.$systemBranding['logo']) }}" alt="Current system logo" class="w-10 h-10 rounded-xl object-contain bg-white p-1">
+                @else
+                <span class="w-10 h-10 rounded-xl bg-emerald-700 flex items-center justify-center text-amber-300 font-black">✓</span>
+                @endif
+                <div class="min-w-0"><p class="text-xs text-gray-400">Current identity</p><p class="font-black truncate">{{ $systemBranding['name'] }}</p></div>
+            </div>
+        </div>
+        <form method="POST" action="{{ route('manage.branding.update') }}" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            @csrf
+            <div class="lg:col-span-2 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">System name</label>
+                    <input type="text" name="system_name" value="{{ old('system_name', $systemBranding['name']) }}" required maxlength="100" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 bg-gray-50 focus:bg-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">Tagline</label>
+                    <input type="text" name="system_tagline" value="{{ old('system_tagline', $systemBranding['tagline']) }}" required maxlength="160" class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 bg-gray-50 focus:bg-white">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">System logo</label>
+                <input type="file" name="system_logo" accept=".png,.jpg,.jpeg,.webp,.svg,image/*" class="block w-full text-xs text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-100 file:px-3 file:py-2 file:font-bold file:text-emerald-800 hover:file:bg-emerald-200">
+                <p class="text-[11px] text-gray-400 mt-2">PNG, JPG, WEBP, or SVG. Maximum 2 MB.</p>
+            </div>
+            <div class="lg:col-span-3 flex justify-end border-t border-gray-100 pt-4">
+                <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-sm py-3 px-6 rounded-xl shadow-md transition-all">Save Branding</button>
+            </div>
+        </form>
+    </div>
+
     {{-- 1. Users & Access Control --}}
     <div x-show="tab === 'users'" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden space-y-6 p-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">

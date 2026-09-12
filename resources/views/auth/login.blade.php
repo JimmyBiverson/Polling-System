@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login — Kenya Election Tally</title>
+    <title>Login — {{ $systemBranding['name'] }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-[#f4f7f5] min-h-screen flex items-center justify-center antialiased">
@@ -12,13 +12,17 @@
     <div class="w-full max-w-md px-4" x-data="{ loading: false }">
         {{-- Header --}}
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-700 rounded-2xl shadow-lg mb-4">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-700 rounded-2xl shadow-lg mb-4 overflow-hidden">
+                @if($systemBranding['logo'])
+                <img src="{{ asset('storage/'.$systemBranding['logo']) }}" alt="{{ $systemBranding['name'] }} logo" class="w-full h-full object-contain p-2">
+                @else
                 <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                 </svg>
+                @endif
             </div>
-            <h1 class="text-2xl font-bold text-gray-900">Kenya Election Tally</h1>
-            <p class="text-gray-700 text-sm mt-1">Secure access to the Kakamega tallying center</p>
+            <h1 class="text-2xl font-bold text-gray-900">{{ $systemBranding['name'] }}</h1>
+            <p class="text-gray-700 text-sm mt-1">{{ $systemBranding['tagline'] }}</p>
         </div>
 
         {{-- Login Card --}}

@@ -9,6 +9,7 @@ use App\Models\County;
 use App\Models\ElectionType;
 use App\Models\PollingStation;
 use App\Models\PresidingOfficer;
+use App\Models\SystemSetting;
 use App\Models\User;
 use App\Models\VoteSubmission;
 use App\Models\Ward;
@@ -16,6 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ManageController extends Controller
 {
@@ -35,6 +37,39 @@ class ManageController extends Controller
             'counties', 'constituencies', 'wards', 'stations',
             'candidates', 'electionTypes', 'users', 'auditLogs', 'presidingOfficers'
         ));
+    }
+
+    public function updateBranding(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'system_name' => 'required|string|max:100',
+            'system_tagline' => 'required|string|max:160',
+            'system_logo' => 'nullable|image|mimes:png,jpg,jpeg,webp,svg|max:2048',
+        ]);
+
+        SystemSetting::setValue('system_name', $request->string('system_name')->trim()->toString());
+        SystemSetting::setValue('system_tagline', $request->string('system_tagline')->trim()->toString());
+
+        if ($request->hasFile('system_logo')) {
+            $oldLogo = SystemSetting::valueFor('system_logo');
+            $logoPath = $request->file('system_logo')->store('branding', 'public');
+            SystemSetting::setValue('system_logo', $logoPath);
+
+            if ($oldLogo) {
+                Storage::disk('public')->delete($oldLogo);
+            }
+        }
+
+        AuditLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'system_branding_updated',
+            'model_type' => SystemSetting::class,
+            'new_values' => ['system_name' => $request->system_name, 'system_tagline' => $request->system_tagline, 'logo_updated' => $request->hasFile('system_logo')],
+            'ip_address' => $request->ip(),
+            'description' => 'Super Admin updated system branding.',
+        ]);
+
+        return $this->manageRedirect('branding', 'System branding updated successfully.');
     }
 
     // ── Super Admin User Management ─────────────────────────

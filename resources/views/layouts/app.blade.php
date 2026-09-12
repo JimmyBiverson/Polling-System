@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Kenya Election Tally') — Kenya National Polling System</title>
+    <title>@yield('title', $systemBranding['name']) — {{ $systemBranding['name'] }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         [x-cloak] { display: none !important; }
@@ -25,17 +25,21 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div class="flex items-center justify-between h-16 sm:h-20">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-800/80 border border-emerald-400/40 rounded-2xl flex items-center justify-center text-xl shadow-inner backdrop-blur-md">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-800/80 border border-emerald-400/40 rounded-2xl flex items-center justify-center text-xl shadow-inner backdrop-blur-md overflow-hidden">
+                        @if($systemBranding['logo'])
+                        <img src="{{ asset('storage/'.$systemBranding['logo']) }}" alt="{{ $systemBranding['name'] }} logo" class="w-full h-full object-contain p-1">
+                        @else
                         <svg class="w-6 h-6 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
+                        @endif
                     </div>
                     <div>
                         <h1 class="text-base sm:text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
-                            <span>Kenya Election Tally</span>
+                            <span>{{ $systemBranding['name'] }}</span>
                             <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                         </h1>
-                        <p class="text-amber-300 text-xs sm:text-sm font-bold tracking-wide">National Polling System — Kakamega County</p>
+                        <p class="text-amber-300 text-xs sm:text-sm font-bold tracking-wide">{{ $systemBranding['tagline'] }}</p>
                     </div>
                 </div>
 
