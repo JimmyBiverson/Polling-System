@@ -11,7 +11,7 @@
     </style>
     @stack('styles')
 </head>
-<body class="bg-[#f4f7f5] text-gray-950 antialiased min-h-screen flex flex-col">
+<body class="bg-[#f4f7f5] text-gray-950 antialiased min-h-screen flex flex-col overflow-x-hidden">
 
 <div x-data="{ mobileMenuOpen: false }" @keydown.escape.window="mobileMenuOpen = false" class="min-h-screen flex flex-col bg-[#f4f7f5]">
 
@@ -42,7 +42,7 @@
                 <div class="flex items-center gap-3">
                     @auth
                         {{-- Desktop User Badge & Logout --}}
-                        <div class="hidden md:flex items-center gap-3">
+                        <div class="hidden lg:flex items-center gap-3">
                             <div class="flex items-center gap-2 bg-emerald-900/90 px-3.5 py-1.5 rounded-xl border border-emerald-700/60 shadow-inner">
                                 <span class="text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm {{ auth()->user()->isSuperAdmin() ? 'bg-amber-400 text-gray-950 font-extrabold' : (auth()->user()->isAdmin() ? 'bg-blue-400 text-gray-950 font-extrabold' : 'bg-gray-200 text-gray-900 font-extrabold') }}">
                                     {{ auth()->user()->role === 'super_admin' ? '👑 Super Admin' : (auth()->user()->role === 'county_admin' ? '🏢 County Admin' : '👤 Field Agent') }}
@@ -59,7 +59,7 @@
                         </div>
 
                         {{-- Mobile Hamburger Trigger Button --}}
-                        <button @click="mobileMenuOpen = true" type="button" aria-label="Open navigation menu" :aria-expanded="mobileMenuOpen.toString()" aria-controls="mobile-navigation" class="md:hidden bg-emerald-800/80 hover:bg-emerald-700 text-white p-2.5 rounded-xl border border-emerald-500/50 shadow-md focus:outline-none flex items-center gap-2">
+                        <button @click="mobileMenuOpen = true" type="button" aria-label="Open navigation menu" :aria-expanded="mobileMenuOpen.toString()" aria-controls="mobile-navigation" class="lg:hidden bg-emerald-800/80 hover:bg-emerald-700 text-white p-2.5 rounded-xl border border-emerald-500/50 shadow-md focus:outline-none flex items-center gap-2">
                             <span class="text-xs font-bold text-amber-300">Menu</span>
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
@@ -73,7 +73,7 @@
 
     {{-- Desktop Navigation Bar --}}
     @auth
-    <nav class="hidden md:block bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
+    <nav class="hidden lg:block bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex gap-2 py-2.5">
                 @php $role = auth()->user()->role; @endphp
@@ -115,7 +115,7 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 md:hidden"
+         class="fixed inset-0 z-50 lg:hidden"
          x-cloak>
         {{-- Backdrop --}}
         <div @click="mobileMenuOpen = false" class="fixed inset-0 bg-gray-950/70 backdrop-blur-sm"></div>
